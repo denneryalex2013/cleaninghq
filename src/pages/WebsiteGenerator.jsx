@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from "@/api/base44Client";
-import { createPageUrl } from './utils';
+import { createPageUrl } from '../utils';
 import ProgressBar from '../components/generator/ProgressBar';
 import Step1Business from '../components/generator/Step1Business';
 import Step2Services from '../components/generator/Step2Services';

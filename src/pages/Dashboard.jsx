@@ -11,6 +11,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [siteRequest, setSiteRequest] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const urlParams = new URLSearchParams(window.location.search);
   const recordId = urlParams.get('id');
@@ -54,6 +55,24 @@ export default function Dashboard() {
       cancelled: { color: 'bg-red-100 text-red-800 border-red-200', label: 'Cancelled' }
     };
     return configs[status] || configs.inactive;
+  };
+
+  const handleActivate = async () => {
+    setCheckoutLoading(true);
+    try {
+      const response = await base44.functions.invoke('createStripeCheckout', {
+        businessId: siteRequest.id,
+        email: siteRequest.email
+      });
+      
+      if (response.data.url) {
+        window.location.href = response.data.url;
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('Failed to start checkout. Please try again.');
+      setCheckoutLoading(false);
+    }
   };
 
   if (loading) {
@@ -219,8 +238,12 @@ export default function Dashboard() {
                     </li>
                   </ul>
 
-                  <Button className="w-full h-12 bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-700 hover:to-teal-600 font-semibold">
-                    Activate Now
+                  <Button 
+                    className="w-full h-12 bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-700 hover:to-teal-600 font-semibold"
+                    onClick={handleActivate}
+                    disabled={checkoutLoading}
+                  >
+                    {checkoutLoading ? 'Loading...' : 'Activate Now'}
                   </Button>
                 </CardContent>
               </Card>

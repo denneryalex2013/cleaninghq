@@ -21,7 +21,7 @@ export default function Step4Branding({ formData, setFormData, onNext, onBack })
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.primary_color || !formData.style) {
-      alert('Please select both a color and style');
+      alert('Please select both a primary color and style');
       return;
     }
     onNext();
@@ -37,10 +37,11 @@ export default function Step4Branding({ formData, setFormData, onNext, onBack })
         <p className="text-gray-600">Choose colors and style that represent your business</p>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-8">
+        {/* Primary Color */}
         <div>
-          <Label className="text-sm font-medium text-gray-700 mb-3 block">
-            Primary Brand Color
+          <Label className="text-base font-semibold text-gray-900 mb-3 block">
+            Primary Brand Color *
           </Label>
           <div className="grid grid-cols-4 gap-3">
             {colorOptions.map((color) => (
@@ -71,9 +72,114 @@ export default function Step4Branding({ formData, setFormData, onNext, onBack })
           </div>
         </div>
 
+        {/* Secondary Color */}
         <div>
-          <Label htmlFor="style" className="text-sm font-medium text-gray-700">
-            Website Style
+          <Label className="text-base font-semibold text-gray-900 mb-3 block">
+            Secondary Brand Color (Optional)
+          </Label>
+          <div className="grid grid-cols-4 gap-3">
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, secondary_color: '' })}
+              className={`relative p-4 rounded-xl border-2 transition-all ${
+                !formData.secondary_color
+                  ? 'border-gray-900 scale-105'
+                  : 'border-gray-200 hover:border-gray-400'
+              }`}
+            >
+              <div className="w-full h-12 rounded-lg bg-gray-100 flex items-center justify-center">
+                <span className="text-xs text-gray-500 font-medium">None</span>
+              </div>
+              {!formData.secondary_color && (
+                <div className="absolute top-2 right-2 w-5 h-5 bg-gray-900 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xs">✓</span>
+                </div>
+              )}
+            </button>
+            {colorOptions.map((color) => (
+              <button
+                key={color.value}
+                type="button"
+                onClick={() => setFormData({ ...formData, secondary_color: color.value })}
+                className={`relative p-4 rounded-xl border-2 transition-all ${
+                  formData.secondary_color === color.value
+                    ? 'border-gray-900 scale-105'
+                    : 'border-gray-200 hover:border-gray-400'
+                }`}
+              >
+                <div
+                  className="w-full h-12 rounded-lg"
+                  style={{ backgroundColor: color.value }}
+                />
+                <p className="text-xs font-medium text-gray-700 mt-2 text-center">
+                  {color.name}
+                </p>
+                {formData.secondary_color === color.value && (
+                  <div className="absolute top-2 right-2 w-5 h-5 bg-gray-900 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs">✓</span>
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Tertiary Color */}
+        <div>
+          <Label className="text-base font-semibold text-gray-900 mb-3 block">
+            Tertiary Brand Color (Optional)
+          </Label>
+          <div className="grid grid-cols-4 gap-3">
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, tertiary_color: '' })}
+              className={`relative p-4 rounded-xl border-2 transition-all ${
+                !formData.tertiary_color
+                  ? 'border-gray-900 scale-105'
+                  : 'border-gray-200 hover:border-gray-400'
+              }`}
+            >
+              <div className="w-full h-12 rounded-lg bg-gray-100 flex items-center justify-center">
+                <span className="text-xs text-gray-500 font-medium">None</span>
+              </div>
+              {!formData.tertiary_color && (
+                <div className="absolute top-2 right-2 w-5 h-5 bg-gray-900 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xs">✓</span>
+                </div>
+              )}
+            </button>
+            {colorOptions.map((color) => (
+              <button
+                key={color.value}
+                type="button"
+                onClick={() => setFormData({ ...formData, tertiary_color: color.value })}
+                className={`relative p-4 rounded-xl border-2 transition-all ${
+                  formData.tertiary_color === color.value
+                    ? 'border-gray-900 scale-105'
+                    : 'border-gray-200 hover:border-gray-400'
+                }`}
+              >
+                <div
+                  className="w-full h-12 rounded-lg"
+                  style={{ backgroundColor: color.value }}
+                />
+                <p className="text-xs font-medium text-gray-700 mt-2 text-center">
+                  {color.name}
+                </p>
+                {formData.tertiary_color === color.value && (
+                  <div className="absolute top-2 right-2 w-5 h-5 bg-gray-900 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs">✓</span>
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Style */}
+        <div>
+          <Label htmlFor="style" className="text-base font-semibold text-gray-900">
+            Website Style *
           </Label>
           <Select
             value={formData.style}

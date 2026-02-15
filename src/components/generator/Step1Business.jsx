@@ -118,6 +118,23 @@ export default function Step1Business({ formData, setFormData, onNext }) {
         </div>
 
         <div>
+          <Label htmlFor="existing_website_url" className="text-sm font-medium text-gray-700">
+            Enter your current website (optional)
+          </Label>
+          <Input
+            id="existing_website_url"
+            type="url"
+            value={formData.existing_website_url || ''}
+            onChange={(e) => setFormData({ ...formData, existing_website_url: e.target.value })}
+            placeholder="https://yourwebsite.com"
+            className="mt-1.5 h-12 text-base"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            We will use this to improve your new website automatically
+          </p>
+        </div>
+
+        <div>
           <Label className="text-sm font-medium text-gray-700 mb-2 block">
             Company Logo (Optional)
           </Label>

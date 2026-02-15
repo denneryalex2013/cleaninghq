@@ -55,7 +55,7 @@ export default function Step5Confirmation({ formData, onSubmit, onBack, isSubmit
           <div className="flex-1">
             <p className="text-sm font-medium text-gray-500">Services</p>
             <div className="flex flex-wrap gap-2 mt-2">
-              {formData.services?.map((service) => (
+              {formData.service_types?.map((service) => (
                 <span
                   key={service}
                   className="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium"
@@ -90,14 +90,46 @@ export default function Step5Confirmation({ formData, onSubmit, onBack, isSubmit
         <div className="flex gap-4">
           <Palette className="w-5 h-5 text-teal-600 mt-1 flex-shrink-0" />
           <div className="flex-1">
-            <p className="text-sm font-medium text-gray-500">Branding</p>
-            <div className="flex items-center gap-3 mt-2">
-              <div
-                className="w-8 h-8 rounded-lg border-2 border-gray-200"
-                style={{ backgroundColor: formData.primary_color }}
-              />
-              <span className="text-base font-semibold text-gray-900">{formData.style} Style</span>
+            <p className="text-sm font-medium text-gray-500">Brand Colors</p>
+            <div className="flex flex-wrap items-center gap-4 mt-2">
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-10 h-10 rounded-lg border-2 border-gray-300"
+                  style={{ backgroundColor: formData.primary_color }}
+                />
+                <div>
+                  <p className="text-xs text-gray-500">Primary</p>
+                  <p className="text-sm font-medium text-gray-900">{formData.primary_color}</p>
+                </div>
+              </div>
+              {formData.secondary_color && (
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-10 h-10 rounded-lg border-2 border-gray-300"
+                    style={{ backgroundColor: formData.secondary_color }}
+                  />
+                  <div>
+                    <p className="text-xs text-gray-500">Secondary</p>
+                    <p className="text-sm font-medium text-gray-900">{formData.secondary_color}</p>
+                  </div>
+                </div>
+              )}
+              {formData.tertiary_color && (
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-10 h-10 rounded-lg border-2 border-gray-300"
+                    style={{ backgroundColor: formData.tertiary_color }}
+                  />
+                  <div>
+                    <p className="text-xs text-gray-500">Tertiary</p>
+                    <p className="text-sm font-medium text-gray-900">{formData.tertiary_color}</p>
+                  </div>
+                </div>
+              )}
             </div>
+            <p className="text-sm text-gray-700 mt-2">
+              <strong>Style:</strong> {formData.style}
+            </p>
           </div>
         </div>
       </div>

@@ -3,23 +3,28 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2, Circle, Briefcase } from "lucide-react";
 
 const services = [
-  { value: "Office Cleaning", icon: "🏢" },
+  { value: "Commercial Cleaning", icon: "🏢" },
+  { value: "Residential Cleaning", icon: "🏠" },
+  { value: "Post-Construction Cleaning", icon: "🏗️" },
+  { value: "Office Cleaning", icon: "💼" },
   { value: "Medical Cleaning", icon: "🏥" },
-  { value: "School Cleaning", icon: "🏫" },
-  { value: "Industrial Cleaning", icon: "🏭" },
-  { value: "Apartment Cleaning", icon: "🏘️" },
-  { value: "Airbnb Cleaning", icon: "🏠" },
-  { value: "Other", icon: "✨" }
+  { value: "Janitorial Services", icon: "🧹" },
+  { value: "Airbnb Cleaning", icon: "🏡" },
+  { value: "Move-In / Move-Out Cleaning", icon: "📦" },
+  { value: "Floor Care", icon: "🧽" },
+  { value: "Carpet Cleaning", icon: "🪟" },
+  { value: "Pressure Washing", icon: "💧" },
+  { value: "Window Cleaning", icon: "🪟" }
 ];
 
 export default function Step2Services({ formData, setFormData, onNext, onBack }) {
-  const selectedServices = formData.services || [];
+  const selectedServices = formData.service_types || [];
 
   const toggleService = (service) => {
     const newServices = selectedServices.includes(service)
       ? selectedServices.filter(s => s !== service)
       : [...selectedServices, service];
-    setFormData({ ...formData, services: newServices });
+    setFormData({ ...formData, service_types: newServices });
   };
 
   const handleSubmit = (e) => {

@@ -47,22 +47,22 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import WebsiteGenerator from './pages/WebsiteGenerator';
-import GeneratingWebsite from './pages/GeneratingWebsite';
 import Home from './pages/Home';
 import Preview from './pages/Preview';
 import Dashboard from './pages/Dashboard';
+import Start from './pages/Start';
+import Generating from './pages/Generating';
 
 
 export const PAGES = {
-    "WebsiteGenerator": WebsiteGenerator,
-    "GeneratingWebsite": GeneratingWebsite,
     "Home": Home,
     "Preview": Preview,
     "Dashboard": Dashboard,
+    "Start": Start,
+    "Generating": Generating,
 }
 
 export const pagesConfig = {
-    mainPage: "WebsiteGenerator",
+    mainPage: "Home",
     Pages: PAGES,
 };

@@ -26,7 +26,7 @@ export default function Home() {
             More booked jobs. More trust. No tech skills needed.
           </p>
 
-          <Link to={createPageUrl('WebsiteGenerator')}>
+          <Link to={createPageUrl('Start')}>
             <Button className="h-16 px-12 text-lg font-semibold bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-700 hover:to-teal-600 shadow-xl hover:shadow-2xl transition-all">
               🚀 Generate My Website
             </Button>
@@ -113,7 +113,7 @@ export default function Home() {
           <p className="text-xl text-teal-100 mb-10">
             Join hundreds of cleaning companies growing with CleaningHQ
           </p>
-          <Link to={createPageUrl('WebsiteGenerator')}>
+          <Link to={createPageUrl('Start')}>
             <Button className="h-16 px-12 text-lg font-semibold bg-white text-teal-600 hover:bg-gray-50 shadow-xl">
               Get Started Now — Free Preview
             </Button>

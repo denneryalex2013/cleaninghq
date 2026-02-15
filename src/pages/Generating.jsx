@@ -4,7 +4,7 @@ import { Loader2, CheckCircle2, Sparkles } from 'lucide-react';
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from '../utils';
 
-export default function GeneratingWebsite() {
+export default function Generating() {
   const navigate = useNavigate();
   const [progress, setProgress] = useState(0);
   const [currentMessage, setCurrentMessage] = useState(0);
@@ -33,7 +33,7 @@ export default function GeneratingWebsite() {
         }
         return prev + 1;
       });
-    }, 500);
+    }, 300);
 
     const messageInterval = setInterval(() => {
       setCurrentMessage((prev) => (prev + 1) % messages.length);
@@ -49,20 +49,22 @@ export default function GeneratingWebsite() {
     if (progress === 100 && recordId && !checkingStatus) {
       setCheckingStatus(true);
       
-      // Simulate generation completion after 3 seconds
       setTimeout(async () => {
         try {
-          // Update status to generated
-          await base44.entities.SiteRequest.update(recordId, { status: 'generated' });
+          await base44.entities.SiteRequest.update(recordId, { 
+            status: 'generated',
+            generated_content: {
+              generated_at: new Date().toISOString(),
+              version: '1.0'
+            }
+          });
           
-          // Redirect to preview
           navigate(createPageUrl('Preview') + `?id=${recordId}`);
         } catch (error) {
           console.error('Error updating status:', error);
-          // Still redirect even if update fails
           navigate(createPageUrl('Preview') + `?id=${recordId}`);
         }
-      }, 3000);
+      }, 2000);
     }
   }, [progress, recordId, checkingStatus]);
 
@@ -90,12 +92,12 @@ export default function GeneratingWebsite() {
           <p className="text-xl text-gray-600 mb-8">
             {progress < 100 ? (
               <>
-                Your professional cleaning website for <strong>{companyName}</strong> is being generated.
-                This usually takes less than 60 seconds.
+                Your professional website for <strong>{companyName}</strong> is being generated.
+                This takes about 30 seconds.
               </>
             ) : (
               <>
-                Your website is ready! We're preparing your preview...
+                Your website is ready! Preparing your preview...
               </>
             )}
           </p>
@@ -118,25 +120,6 @@ export default function GeneratingWebsite() {
             </div>
           )}
 
-          {progress === 100 && previewUrl && (
-            <div className="space-y-4">
-              <div className="bg-gradient-to-r from-teal-50 to-blue-50 border-2 border-teal-200 rounded-xl p-6">
-                <p className="text-sm font-medium text-gray-600 mb-2">Your preview URL:</p>
-                <a
-                  href={previewUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-teal-600 font-mono text-sm hover:text-teal-700 underline break-all"
-                >
-                  {previewUrl}
-                </a>
-              </div>
-              <p className="text-sm text-gray-500">
-                Check your email for next steps and customization options
-              </p>
-            </div>
-          )}
-
           <div className="mt-12 grid grid-cols-3 gap-6 text-center">
             <div>
               <div className="text-3xl font-bold text-teal-600">⚡</div>
@@ -151,10 +134,6 @@ export default function GeneratingWebsite() {
               <p className="text-xs text-gray-600 mt-2">Mobile Optimized</p>
             </div>
           </div>
-        </div>
-
-        <div className="mt-8 text-center text-sm text-gray-500">
-          <p>💡 Tip: Check your spam folder if you don't see our email</p>
         </div>
       </div>
     </div>

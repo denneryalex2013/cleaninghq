@@ -9,7 +9,7 @@ import Step3Trust from '../components/generator/Step3Trust';
 import Step4Branding from '../components/generator/Step4Branding';
 import Step5Confirmation from '../components/generator/Step5Confirmation';
 
-export default function WebsiteGenerator() {
+export default function Start() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,7 +28,8 @@ export default function WebsiteGenerator() {
     logo: '',
     status: 'pending',
     generated_content: {},
-    preview_url: ''
+    preview_url: '',
+    subscription_status: 'inactive'
   });
 
   const totalSteps = 5;
@@ -61,12 +62,9 @@ export default function WebsiteGenerator() {
         preview_url: previewUrl
       };
 
-      await base44.entities.SiteRequest.create(requestData);
+      const newRequest = await base44.entities.SiteRequest.create(requestData);
       
-      const newRequest = await base44.entities.SiteRequest.filter({ preview_url: previewUrl });
-      const requestId = newRequest[0]?.id;
-      
-      navigate(createPageUrl('GeneratingWebsite') + `?id=${requestId}&company=${encodeURIComponent(formData.company_name)}&preview=${encodeURIComponent(previewUrl)}`);
+      navigate(createPageUrl('Generating') + `?id=${newRequest.id}&company=${encodeURIComponent(formData.company_name)}&preview=${encodeURIComponent(previewUrl)}`);
     } catch (error) {
       console.error('Submission error:', error);
       alert('Something went wrong. Please try again.');

@@ -19,11 +19,15 @@ export default function Start() {
     phone: '',
     city: '',
     state: '',
+    existing_website_url: '',
+    service_types: [],
     services: [],
     years_in_business: 0,
     insured: undefined,
     google_rating: 0,
     primary_color: '',
+    secondary_color: '',
+    tertiary_color: '',
     style: '',
     logo: '',
     status: 'pending',
@@ -57,14 +61,54 @@ export default function Start() {
     try {
       const previewUrl = generatePreviewUrl(formData.company_name);
       
+      // Generate enhanced content with AI if existing website provided
+      let generatedContent = {
+        generated_at: new Date().toISOString(),
+        version: '2.0',
+        brand: {
+          primary_color: formData.primary_color,
+          secondary_color: formData.secondary_color || null,
+          tertiary_color: formData.tertiary_color || null
+        }
+      };
+
+      if (formData.existing_website_url) {
+        try {
+          const aiPrompt = `Generate enhanced website content for a cleaning company.
+
+Company Info:
+- Name: ${formData.company_name}
+- Location: ${formData.city}, ${formData.state}
+- Services: ${formData.service_types.join(', ')}
+- Reference Website: ${formData.existing_website_url}
+
+Use the CleaningHQ proven template structure but draw content inspiration from their existing website.
+Return JSON with: hero (headline, subheadline), about (text), services_descriptions (object mapping each service to description).`;
+
+          const aiContent = await base44.integrations.Core.InvokeLLM({
+            prompt: aiPrompt,
+            add_context_from_internet: true,
+            response_json_schema: {
+              type: "object",
+              properties: {
+                hero: { type: "object" },
+                about: { type: "object" },
+                services_descriptions: { type: "object" }
+              }
+            }
+          });
+
+          generatedContent = { ...generatedContent, ...aiContent };
+        } catch (error) {
+          console.error('AI content generation failed, using defaults:', error);
+        }
+      }
+
       const requestData = {
         ...formData,
         preview_url: previewUrl,
         status: 'generated',
-        generated_content: {
-          generated_at: new Date().toISOString(),
-          version: '1.0'
-        }
+        generated_content: generatedContent
       };
 
       const newRequest = await base44.entities.SiteRequest.create(requestData);

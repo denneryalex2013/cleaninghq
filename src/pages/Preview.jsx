@@ -60,6 +60,8 @@ export default function Preview() {
   }
 
   const primaryColor = siteRequest.primary_color || '#14b8a6';
+  const secondaryColor = siteRequest.secondary_color || `${primaryColor}40`;
+  const tertiaryColor = siteRequest.tertiary_color || '#f3f4f6';
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -168,27 +170,29 @@ export default function Preview() {
         )}
 
         {/* Services Section */}
-        {siteRequest.services && siteRequest.services.length > 0 && (
+        {siteRequest.service_types && siteRequest.service_types.length > 0 && (
           <div className="py-20 px-4">
             <div className="max-w-7xl mx-auto">
               <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">
                 Our Services
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {siteRequest.services.map((service, idx) => (
+                {siteRequest.service_types.map((service, idx) => (
                   <div 
                     key={idx}
-                    className="bg-white border-2 border-gray-200 rounded-2xl p-8 hover:shadow-xl transition-all"
+                    className="bg-white border-2 rounded-2xl p-8 hover:shadow-xl transition-all"
+                    style={{ borderColor: tertiaryColor }}
                   >
                     <div 
                       className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                      style={{ backgroundColor: `${primaryColor}20` }}
+                      style={{ backgroundColor: secondaryColor }}
                     >
                       <span className="text-2xl">✨</span>
                     </div>
                     <h3 className="text-xl font-bold text-gray-900 mb-2">{service}</h3>
                     <p className="text-gray-600">
-                      Professional {service.toLowerCase()} services tailored to your needs.
+                      {siteRequest.generated_content?.services_descriptions?.[service] || 
+                       `Professional ${service.toLowerCase()} services tailored to your needs.`}
                     </p>
                   </div>
                 ))}
@@ -198,16 +202,17 @@ export default function Preview() {
         )}
 
         {/* About Section */}
-        <div className="py-20 px-4 bg-gray-50">
+        <div className="py-20 px-4" style={{ backgroundColor: tertiaryColor }}>
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl font-bold text-gray-900 mb-6">
               Why Choose {siteRequest.company_name}?
             </h2>
             <p className="text-xl text-gray-600 leading-relaxed">
-              We're a trusted cleaning company serving {siteRequest.city}, {siteRequest.state}. 
-              Our team is dedicated to providing exceptional cleaning services with attention to 
-              detail and customer satisfaction. We use professional-grade equipment and eco-friendly 
-              products to ensure your space is spotless and safe.
+              {siteRequest.generated_content?.about?.text || 
+               `We're a trusted cleaning company serving ${siteRequest.city}, ${siteRequest.state}. 
+               Our team is dedicated to providing exceptional cleaning services with attention to 
+               detail and customer satisfaction. We use professional-grade equipment and eco-friendly 
+               products to ensure your space is spotless and safe.`}
             </p>
           </div>
         </div>

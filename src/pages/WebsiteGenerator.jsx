@@ -63,7 +63,10 @@ export default function WebsiteGenerator() {
 
       await base44.entities.SiteRequest.create(requestData);
       
-      navigate(createPageUrl('GeneratingWebsite') + `?company=${encodeURIComponent(formData.company_name)}&preview=${encodeURIComponent(previewUrl)}`);
+      const newRequest = await base44.entities.SiteRequest.filter({ preview_url: previewUrl });
+      const requestId = newRequest[0]?.id;
+      
+      navigate(createPageUrl('GeneratingWebsite') + `?id=${requestId}&company=${encodeURIComponent(formData.company_name)}&preview=${encodeURIComponent(previewUrl)}`);
     } catch (error) {
       console.error('Submission error:', error);
       alert('Something went wrong. Please try again.');

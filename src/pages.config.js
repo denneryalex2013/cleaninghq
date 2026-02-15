@@ -49,11 +49,17 @@
  */
 import WebsiteGenerator from './pages/WebsiteGenerator';
 import GeneratingWebsite from './pages/GeneratingWebsite';
+import Home from './pages/Home';
+import Preview from './pages/Preview';
+import Dashboard from './pages/Dashboard';
 
 
 export const PAGES = {
     "WebsiteGenerator": WebsiteGenerator,
     "GeneratingWebsite": GeneratingWebsite,
+    "Home": Home,
+    "Preview": Preview,
+    "Dashboard": Dashboard,
 }
 
 export const pagesConfig = {

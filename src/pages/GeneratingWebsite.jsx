@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Loader2, CheckCircle2, Sparkles } from 'lucide-react';
+import { base44 } from "@/api/base44Client";
+import { createPageUrl } from '../utils';
 
 export default function GeneratingWebsite() {
+  const navigate = useNavigate();
   const [progress, setProgress] = useState(0);
   const [currentMessage, setCurrentMessage] = useState(0);
+  const [checkingStatus, setCheckingStatus] = useState(false);
 
   const urlParams = new URLSearchParams(window.location.search);
+  const recordId = urlParams.get('id');
   const companyName = urlParams.get('company') || 'Your Company';
   const previewUrl = urlParams.get('preview') || '';
 
@@ -38,6 +44,27 @@ export default function GeneratingWebsite() {
       clearInterval(messageInterval);
     };
   }, []);
+
+  useEffect(() => {
+    if (progress === 100 && recordId && !checkingStatus) {
+      setCheckingStatus(true);
+      
+      // Simulate generation completion after 3 seconds
+      setTimeout(async () => {
+        try {
+          // Update status to generated
+          await base44.entities.SiteRequest.update(recordId, { status: 'generated' });
+          
+          // Redirect to preview
+          navigate(createPageUrl('Preview') + `?id=${recordId}`);
+        } catch (error) {
+          console.error('Error updating status:', error);
+          // Still redirect even if update fails
+          navigate(createPageUrl('Preview') + `?id=${recordId}`);
+        }
+      }, 3000);
+    }
+  }, [progress, recordId, checkingStatus]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-blue-50 flex items-center justify-center px-4">

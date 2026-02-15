@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
             mode: 'subscription',
             line_items: [
                 {
-                    price: 'prod_TzCKbLRk3YY2zj',
+                    price: 'price_1T1EGzK8mU2g6s92CcF6yY2V',
                     quantity: 1,
                 },
             ],

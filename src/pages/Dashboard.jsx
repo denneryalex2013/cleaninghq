@@ -190,13 +190,25 @@ export default function Dashboard() {
                 <p className="text-gray-600 mb-4">
                   Use AI to update your website content, change colors, add pages, and more.
                 </p>
-                <Button variant="outline" className="w-full" disabled>
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Edit with AI Chat (Coming Soon)
-                </Button>
-                <p className="text-xs text-gray-500 mt-2">
-                  This feature will let you make changes by chatting with AI
-                </p>
+                {siteRequest.subscription_status === 'active' ? (
+                  <Button 
+                    className="w-full bg-teal-600 hover:bg-teal-700"
+                    onClick={() => navigate(createPageUrl('Editor') + `?id=${recordId}`)}
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Edit with AI Chat
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="outline" className="w-full" disabled>
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Edit with AI Chat
+                    </Button>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Activate your subscription to unlock the AI editor
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
           </div>

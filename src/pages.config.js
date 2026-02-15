@@ -52,6 +52,7 @@ import Generating from './pages/Generating';
 import Home from './pages/Home';
 import Preview from './pages/Preview';
 import Start from './pages/Start';
+import Editor from './pages/Editor';
 
 
 export const PAGES = {
@@ -60,6 +61,7 @@ export const PAGES = {
     "Home": Home,
     "Preview": Preview,
     "Start": Start,
+    "Editor": Editor,
 }
 
 export const pagesConfig = {

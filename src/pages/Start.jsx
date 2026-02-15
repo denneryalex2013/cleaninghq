@@ -61,7 +61,7 @@ export default function Start() {
     try {
       const previewUrl = generatePreviewUrl(formData.company_name);
       
-      // Generate enhanced content with AI if existing website provided
+      // Generate enhanced content with AI
       let generatedContent = {
         generated_at: new Date().toISOString(),
         version: '2.0',
@@ -72,36 +72,74 @@ export default function Start() {
         }
       };
 
-      if (formData.existing_website_url) {
-        try {
-          const aiPrompt = `Generate enhanced website content for a cleaning company.
+      try {
+        const aiPrompt = `Generate professional website content for a cleaning company following a premium agency template structure.
 
 Company Info:
 - Name: ${formData.company_name}
 - Location: ${formData.city}, ${formData.state}
 - Services: ${formData.service_types.join(', ')}
-- Reference Website: ${formData.existing_website_url}
+- Years in Business: ${formData.years_in_business || 'New'}
+${formData.existing_website_url ? `- Reference Website: ${formData.existing_website_url}` : ''}
 
-Use the CleaningHQ proven template structure but draw content inspiration from their existing website.
-Return JSON with: hero (headline, subheadline), about (text), services_descriptions (object mapping each service to description).`;
+Generate content following this exact structure:
 
-          const aiContent = await base44.integrations.Core.InvokeLLM({
-            prompt: aiPrompt,
-            add_context_from_internet: true,
-            response_json_schema: {
-              type: "object",
-              properties: {
-                hero: { type: "object" },
-                about: { type: "object" },
-                services_descriptions: { type: "object" }
-              }
+hero: {
+  headline: (48-64px size, benefit-driven, mentions location),
+  subheadline: (20-28px, builds trust, mentions coverage area)
+}
+
+trust_bar: [4 short trust statements like "Licensed", "Insured", "Locally Owned", "5-Star Rated"]
+
+services: {
+  [service_name]: "2-3 sentence description focusing on benefits"
+}
+
+about: {
+  title: "Compelling headline",
+  text: "3-4 sentences establishing authority and trust"
+}
+
+benefits: [
+  {title: "Benefit title", description: "Benefit description"}
+] (6 benefits total)
+
+testimonials: [
+  {name: "Customer name", text: "Testimonial quote", rating: 5}
+] (3 testimonials)
+
+cta: {
+  headline: "Strong action-oriented headline",
+  subheadline: "Supporting text"
+}
+
+footer: {
+  tagline: "Short company tagline"
+}
+
+${formData.existing_website_url ? 'Use the reference website for content inspiration but create fresh, professional copy.' : 'Create compelling, professional copy that converts.'}`;
+
+        const aiContent = await base44.integrations.Core.InvokeLLM({
+          prompt: aiPrompt,
+          add_context_from_internet: formData.existing_website_url ? true : false,
+          response_json_schema: {
+            type: "object",
+            properties: {
+              hero: { type: "object" },
+              trust_bar: { type: "array" },
+              services: { type: "object" },
+              about: { type: "object" },
+              benefits: { type: "array" },
+              testimonials: { type: "array" },
+              cta: { type: "object" },
+              footer: { type: "object" }
             }
-          });
+          }
+        });
 
-          generatedContent = { ...generatedContent, ...aiContent };
-        } catch (error) {
-          console.error('AI content generation failed, using defaults:', error);
-        }
+        generatedContent = { ...generatedContent, ...aiContent };
+      } catch (error) {
+        console.error('AI content generation failed, using defaults:', error);
       }
 
       const requestData = {

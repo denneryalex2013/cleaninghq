@@ -59,12 +59,17 @@ export default function Start() {
       
       const requestData = {
         ...formData,
-        preview_url: previewUrl
+        preview_url: previewUrl,
+        status: 'generated',
+        generated_content: {
+          generated_at: new Date().toISOString(),
+          version: '1.0'
+        }
       };
 
       const newRequest = await base44.entities.SiteRequest.create(requestData);
       
-      navigate(createPageUrl('Generating') + `?id=${newRequest.id}&company=${encodeURIComponent(formData.company_name)}&preview=${encodeURIComponent(previewUrl)}`);
+      navigate(createPageUrl('Preview') + `?id=${newRequest.id}`);
     } catch (error) {
       console.error('Submission error:', error);
       alert('Something went wrong. Please try again.');

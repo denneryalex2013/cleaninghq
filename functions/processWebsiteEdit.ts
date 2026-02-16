@@ -6,7 +6,12 @@ Deno.serve(async (req) => {
         const { siteRequestId, editRequest } = await req.json();
 
         if (!siteRequestId || !editRequest) {
-            return Response.json({ error: 'siteRequestId and editRequest required' }, { status: 400 });
+            return Response.json({ error: 'Missing required parameters' }, { status: 400 });
+        }
+
+        const user = await base44.auth.me();
+        if (!user) {
+            return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         // Load site request
@@ -55,7 +60,7 @@ Return JSON with:
 
 Only return valid JSON, nothing else.`;
 
-    const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
+    const result = await base44.integrations.Core.InvokeLLM({
         prompt,
         response_json_schema: {
             type: "object",

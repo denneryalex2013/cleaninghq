@@ -53,6 +53,8 @@ import Generating from './pages/Generating';
 import Home from './pages/Home';
 import Preview from './pages/Preview';
 import Start from './pages/Start';
+import Success from './pages/Success';
+import Cancel from './pages/Cancel';
 import __Layout from './Layout.jsx';
 
 
@@ -63,6 +65,8 @@ export const PAGES = {
     "Home": Home,
     "Preview": Preview,
     "Start": Start,
+    "Success": Success,
+    "Cancel": Cancel,
 }
 
 export const pagesConfig = {

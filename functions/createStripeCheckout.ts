@@ -13,6 +13,9 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'businessId and email are required' }, { status: 400 });
         }
 
+        const origin = req.headers.get('origin') || 'https://app.base44.com';
+        const appPath = origin.includes('base44.com') ? '/cleaninghq' : '';
+
         const session = await stripe.checkout.sessions.create({
             mode: 'subscription',
             payment_method_types: ['card'],
@@ -23,8 +26,8 @@ Deno.serve(async (req) => {
                 },
             ],
             customer_email: email,
-            success_url: `${req.headers.get('origin') || 'https://preview.cleaninghq.io'}/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${req.headers.get('origin') || 'https://preview.cleaninghq.io'}/cancel`,
+            success_url: `${origin}${appPath}/Success?session_id={CHECKOUT_SESSION_ID}&business_id=${businessId}`,
+            cancel_url: `${origin}${appPath}/Cancel`,
             metadata: {
                 businessId: businessId,
             },

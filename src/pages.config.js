@@ -47,34 +47,34 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import Auth from './pages/Auth';
 import Cancel from './pages/Cancel';
+import CustomerDashboard from './pages/CustomerDashboard';
 import Dashboard from './pages/Dashboard';
 import Editor from './pages/Editor';
 import Generating from './pages/Generating';
+import HeroEditor from './pages/HeroEditor';
 import Home from './pages/Home';
+import ImageManager from './pages/ImageManager';
 import Preview from './pages/Preview';
 import Start from './pages/Start';
 import Success from './pages/Success';
-import CustomerDashboard from './pages/CustomerDashboard';
-import Auth from './pages/Auth';
-import HeroEditor from './pages/HeroEditor';
-import ImageManager from './pages/ImageManager';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "Auth": Auth,
     "Cancel": Cancel,
+    "CustomerDashboard": CustomerDashboard,
     "Dashboard": Dashboard,
     "Editor": Editor,
     "Generating": Generating,
+    "HeroEditor": HeroEditor,
     "Home": Home,
+    "ImageManager": ImageManager,
     "Preview": Preview,
     "Start": Start,
     "Success": Success,
-    "CustomerDashboard": CustomerDashboard,
-    "Auth": Auth,
-    "HeroEditor": HeroEditor,
-    "ImageManager": ImageManager,
 }
 
 export const pagesConfig = {

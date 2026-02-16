@@ -32,22 +32,20 @@ export default function Generating() {
     if (progress === 100 && recordId && !checkingStatus) {
       setCheckingStatus(true);
       
-      setTimeout(async () => {
-        try {
-          await base44.entities.SiteRequest.update(recordId, { 
-            status: 'generated',
-            generated_content: {
-              generated_at: new Date().toISOString(),
-              version: '1.0'
-            }
-          });
-          
-          navigate(createPageUrl('Preview') + `?id=${recordId}`);
-        } catch (error) {
-          console.error('Error updating status:', error);
-          navigate(createPageUrl('Preview') + `?id=${recordId}`);
-        }
-      }, 2000);
+      try {
+        await base44.entities.SiteRequest.update(recordId, { 
+          status: 'generated',
+          generated_content: {
+            generated_at: new Date().toISOString(),
+            version: '1.0'
+          }
+        });
+        
+        navigate(createPageUrl('Preview') + `?id=${recordId}`);
+      } catch (error) {
+        console.error('Error updating status:', error);
+        navigate(createPageUrl('Preview') + `?id=${recordId}`);
+      }
     }
   }, [progress, recordId, checkingStatus]);
 

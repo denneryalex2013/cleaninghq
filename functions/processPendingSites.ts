@@ -149,8 +149,6 @@ ${site.service_types.map(service => {
 
 CRITICAL: Generate complete, detailed content for ALL pages. Each service page must be fully populated.`;
 
-                console.log(`[LLM] Calling LLM for site: ${site.company_name}`);
-
                 const generatedContent = await base44.asServiceRole.integrations.Core.InvokeLLM({
                     prompt: aiPrompt,
                     add_context_from_internet: !!site.existing_website_url,
@@ -172,40 +170,16 @@ CRITICAL: Generate complete, detailed content for ALL pages. Each service page m
                     }
                 });
 
-                console.log(`[LLM RESPONSE] Raw response keys:`, Object.keys(generatedContent || {}));
-                console.log(`[LLM RESPONSE] Has pages?`, !!generatedContent?.pages);
-                if (generatedContent?.pages) {
-                    console.log(`[LLM RESPONSE] Pages keys:`, Object.keys(generatedContent.pages));
-                    console.log(`[LLM RESPONSE] Services array length:`, generatedContent.pages.services?.length || 0);
-                }
-
                 // Validate that pages structure exists
                 if (!generatedContent?.pages) {
-                    throw new Error(`LLM response missing pages structure. Response: ${JSON.stringify(generatedContent)}`);
+                    throw new Error('LLM response missing pages structure');
                 }
-
-                console.log(`[DB UPDATE] Saving to database for site ${site.id}`);
-                console.log(`[DB UPDATE] generated_content structure:`, {
-                    has_pages: !!generatedContent.pages,
-                    has_homepage: !!generatedContent.pages?.homepage,
-                    services_count: generatedContent.pages?.services?.length || 0
-                });
 
                 // Update site request with generated content
                 await base44.asServiceRole.entities.SiteRequest.update(site.id, {
                     generated_content: generatedContent,
                     status: 'generated'
                 });
-
-                console.log(`[DB VERIFY] Querying record after update...`);
-                const updated = await base44.asServiceRole.entities.SiteRequest.filter({ id: site.id });
-                console.log(`[DB VERIFY] Updated record has pages?`, !!updated[0]?.generated_content?.pages);
-                if (updated[0]?.generated_content?.pages) {
-                    console.log(`[DB VERIFY] Pages structure:`, {
-                        has_homepage: !!updated[0].generated_content.pages.homepage,
-                        services_count: updated[0].generated_content.pages.services?.length || 0
-                    });
-                }
 
                 results.push({ id: site.id, company: site.company_name, status: 'success' });
 

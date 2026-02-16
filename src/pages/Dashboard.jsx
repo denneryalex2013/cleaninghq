@@ -12,30 +12,38 @@ export default function Dashboard() {
   const [siteRequest, setSiteRequest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [user, setUser] = useState(null);
 
   const urlParams = new URLSearchParams(window.location.search);
   const recordId = urlParams.get('id');
 
   useEffect(() => {
-    const loadSiteRequest = async () => {
-      if (!recordId) {
-        setLoading(false);
-        return;
-      }
-
+    const loadData = async () => {
       try {
-        const requests = await base44.entities.SiteRequest.filter({ id: recordId });
-        if (requests.length > 0) {
-          setSiteRequest(requests[0]);
+        const currentUser = await base44.auth.me();
+        setUser(currentUser);
+
+        // If recordId is provided, load that site
+        if (recordId) {
+          const requests = await base44.entities.SiteRequest.filter({ id: recordId });
+          if (requests.length > 0) {
+            setSiteRequest(requests[0]);
+          }
+        } else if (currentUser) {
+          // Otherwise, load user's first site
+          const userSites = await base44.entities.SiteRequest.filter({ user_id: currentUser.id });
+          if (userSites.length > 0) {
+            setSiteRequest(userSites[0]);
+          }
         }
       } catch (error) {
-        console.error('Error loading site request:', error);
+        console.error('Error loading data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    loadSiteRequest();
+    loadData();
   }, [recordId]);
 
   const getStatusConfig = (status) => {
@@ -62,6 +70,7 @@ export default function Dashboard() {
     try {
       const response = await base44.functions.invoke('createStripeCheckout', {
         businessId: siteRequest.id,
+        siteRequestId: siteRequest.id,
         email: siteRequest.email
       });
       

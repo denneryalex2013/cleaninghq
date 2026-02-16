@@ -102,11 +102,16 @@ export default function Dashboard() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="text-center">
           <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Dashboard Not Found</h1>
-          <p className="text-gray-600 mb-6">We couldn't find your website request.</p>
-          <Button onClick={() => navigate(createPageUrl('Home'))}>
-            Go Back Home
-          </Button>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">No Website Found</h1>
+          <p className="text-gray-600 mb-8">You don't have a website yet, or it couldn't be found.</p>
+          <div className="flex gap-3 justify-center">
+            <Button onClick={() => navigate(createPageUrl('Start'))} className="bg-teal-600 hover:bg-teal-700">
+              Create Website
+            </Button>
+            <Button variant="outline" onClick={() => navigate(createPageUrl('Home'))}>
+              Go Home
+            </Button>
+          </div>
         </div>
       </div>
     );

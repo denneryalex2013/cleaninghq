@@ -70,9 +70,30 @@ export default function Preview() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="text-center">
+          <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Preview Not Found</h1>
+          <p className="text-gray-600 mb-6">We couldn't find that website. It may have been deleted or the link is incorrect.</p>
           <Button onClick={() => navigate(createPageUrl('Home'))}>
             Go Back Home
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if content is ready - prevent crashes from missing data
+  const content = siteRequest.generated_content || {};
+  const pages = content.pages || {};
+  
+  if (!pages || Object.keys(pages).length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Generating Your Website</h2>
+          <p className="text-gray-600 mb-6">Your AI-powered website is being created. This usually takes 2-5 minutes...</p>
+          <Button onClick={() => window.location.reload()} variant="outline">
+            Refresh Page
           </Button>
         </div>
       </div>
@@ -82,23 +103,6 @@ export default function Preview() {
   const primaryColor = siteRequest.primary_color || '#14b8a6';
   const secondaryColor = siteRequest.secondary_color || '#0ea5e9';
   const tertiaryColor = siteRequest.tertiary_color || '#f3f4f6';
-  const content = siteRequest.generated_content || {};
-  const pages = content.pages || {};
-
-  // Check if pages object exists - if not, show error
-  if (!pages || Object.keys(pages).length === 0) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Website Still Generating</h1>
-          <p className="text-gray-600 mb-6">Your website content is being created by AI. Please check back in a moment.</p>
-          <Button onClick={() => window.location.reload()}>
-            Refresh Page
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   // Check service pages structure FIRST
   const servicePages = content.pages?.services || [];

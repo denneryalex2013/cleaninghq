@@ -159,14 +159,24 @@ export default function Preview() {
         <div className="max-w-7xl mx-auto flex items-center justify-center gap-4 flex-wrap">
           <span className="font-bold text-gray-900">✨ PREVIEW MODE</span>
           <span className="text-gray-800 text-sm">This is how your website will look</span>
-          <Button 
-            size="sm"
-            className="font-semibold"
-            style={{ backgroundColor: primaryColor }}
-            onClick={() => navigate(createPageUrl('Dashboard') + `?id=${recordId}`)}
-          >
-            Activate Website — $39/month
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              size="sm"
+              variant="outline"
+              className="font-semibold bg-white"
+              onClick={() => navigate(createPageUrl('Editor') + `?id=${recordId}`)}
+            >
+              Edit with AI
+            </Button>
+            <Button 
+              size="sm"
+              className="font-semibold"
+              style={{ backgroundColor: primaryColor }}
+              onClick={() => navigate(createPageUrl('Dashboard') + `?id=${recordId}`)}
+            >
+              Activate — $39/month
+            </Button>
+          </div>
         </div>
       </div>
 

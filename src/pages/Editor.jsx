@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Send, Upload, Loader2, ArrowLeft, ExternalLink } from 'lucide-react';
+import { Send, Upload, Loader2, ArrowLeft, ExternalLink, Sparkles } from 'lucide-react';
 import { createPageUrl } from '../utils';
 import ChatMessage from '../components/editor/ChatMessage';
 
@@ -46,11 +46,6 @@ export default function Editor() {
       }
 
       const request = requests[0];
-
-      if (request.subscription_status !== 'active') {
-        navigate(createPageUrl('Dashboard') + `?id=${recordId}`);
-        return;
-      }
 
       setSiteRequest(request);
 
@@ -174,21 +169,19 @@ export default function Editor() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate(createPageUrl('Dashboard') + `?id=${recordId}`)}
+              onClick={() => navigate(createPageUrl('Preview') + `?id=${recordId}`)}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
+              Back to Preview
             </Button>
             <div className="h-6 w-px bg-gray-300" />
             <h1 className="text-xl font-bold text-gray-900">{siteRequest.company_name}</h1>
           </div>
           <Button
-            variant="outline"
-            size="sm"
-            onClick={() => window.open(siteRequest.preview_url, '_blank')}
+            className="bg-teal-600 hover:bg-teal-700"
+            onClick={() => navigate(createPageUrl('Dashboard') + `?id=${recordId}`)}
           >
-            <ExternalLink className="w-4 h-4 mr-2" />
-            View Live Site
+            Activate Website — $39/month
           </Button>
         </div>
       </div>

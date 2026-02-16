@@ -100,10 +100,21 @@ export default function Preview() {
   };
 
   const servicesProps = {
-    services: siteRequest.service_types?.map(service => ({
-      title: service,
-      description: content.services?.[service] || `Expert ${service.toLowerCase()} solutions for your property.`
-    })) || [],
+    services: hasNewStructure 
+      ? servicePages.map(sp => ({
+          title: sp.service_name,
+          description: sp.intro?.text?.substring(0, 150) + '...' || `Expert ${sp.service_name.toLowerCase()} solutions for your property.`,
+          slug: sp.slug
+        }))
+      : siteRequest.service_types?.map(service => {
+          const citySlug = siteRequest.city.toLowerCase().replace(/\s+/g, '-');
+          const serviceSlug = service.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '');
+          return {
+            title: service,
+            description: content.services?.[service] || `Expert ${service.toLowerCase()} solutions for your property.`,
+            slug: `${serviceSlug}-${citySlug}`
+          };
+        }) || [],
     primaryColor
   };
 

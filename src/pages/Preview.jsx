@@ -123,15 +123,15 @@ export default function Preview() {
   };
 
   const aboutProps = {
-    title: content.about?.title || `Why Choose ${siteRequest.company_name}?`,
-    text: content.about?.text || `We're a trusted cleaning company serving ${siteRequest.city}, ${siteRequest.state}. Our team is dedicated to providing exceptional cleaning services with attention to detail and customer satisfaction.`,
+    title: pages.homepage?.about?.headline || content.about?.title || `Why Choose ${siteRequest.company_name}?`,
+    text: pages.homepage?.about?.text || content.about?.text || `We're a trusted cleaning company serving ${siteRequest.city}, ${siteRequest.state}. Our team is dedicated to providing exceptional cleaning services with attention to detail and customer satisfaction.`,
     primaryColor,
     tertiaryColor
   };
 
   const ctaProps = {
-    headline: content.cta?.headline || 'Ready for a Spotless Space?',
-    subheadline: content.cta?.subheadline || `Get your free quote today and experience the ${siteRequest.company_name} difference`,
+    headline: pages.homepage?.cta?.headline || content.cta?.headline || 'Ready for a Spotless Space?',
+    subheadline: pages.homepage?.cta?.subheadline || content.cta?.subheadline || `Get your free quote today and experience the ${siteRequest.company_name} difference`,
     primaryColor,
     secondaryColor
   };
@@ -146,9 +146,6 @@ export default function Preview() {
     city: siteRequest.city,
     state: siteRequest.state
   };
-
-  const servicePages = content.pages?.services || [];
-  const hasNewStructure = servicePages.length > 0;
 
   const HomePage = () => (
     <>

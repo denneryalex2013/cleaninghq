@@ -202,12 +202,18 @@ export default function Editor() {
             <div className="h-6 w-px bg-gray-300" />
             <h1 className="text-xl font-bold text-gray-900">{siteRequest.company_name}</h1>
           </div>
-          <Button
-            className="bg-teal-600 hover:bg-teal-700"
-            onClick={() => navigate(createPageUrl('Dashboard') + `?id=${recordId}`)}
-          >
-            Activate Website — $39/month
-          </Button>
+          {siteRequest.subscription_status === 'active' ? (
+            <Button variant="outline" disabled className="text-gray-600">
+              ✅ Active Subscription
+            </Button>
+          ) : (
+            <Button
+              className="bg-teal-600 hover:bg-teal-700"
+              onClick={() => navigate(createPageUrl('Dashboard') + `?id=${recordId}`)}
+            >
+              Activate Website — $39/month
+            </Button>
+          )}
         </div>
       </div>
 

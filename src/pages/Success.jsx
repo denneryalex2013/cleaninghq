@@ -10,16 +10,21 @@ export default function Success() {
 
   const urlParams = new URLSearchParams(window.location.search);
   const sessionId = urlParams.get('session_id');
+  const businessId = urlParams.get('business_id');
 
   useEffect(() => {
     if (countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
     } else {
-      // Redirect to home or dashboard
-      navigate(createPageUrl('Home'));
+      // Redirect to editor/dashboard
+      if (businessId) {
+        navigate(createPageUrl('Editor') + `?id=${businessId}`);
+      } else {
+        navigate(createPageUrl('Home'));
+      }
     }
-  }, [countdown, navigate]);
+  }, [countdown, navigate, businessId]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-teal-50 flex items-center justify-center px-4">
@@ -54,7 +59,7 @@ export default function Success() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button
                 className="bg-teal-600 hover:bg-teal-700"
-                onClick={() => navigate(createPageUrl('Home'))}
+                onClick={() => businessId ? navigate(createPageUrl('Editor') + `?id=${businessId}`) : navigate(createPageUrl('Home'))}
               >
                 Go to Dashboard
               </Button>
@@ -67,7 +72,7 @@ export default function Success() {
             </div>
 
             <p className="text-sm text-gray-500 mt-6">
-              Redirecting to home in {countdown} seconds...
+              Redirecting to dashboard in {countdown} seconds...
             </p>
           </div>
         </div>

@@ -10,15 +10,15 @@ export default function Success() {
 
   const urlParams = new URLSearchParams(window.location.search);
   const sessionId = urlParams.get('session_id');
-  const businessId = urlParams.get('business_id');
+  const siteRequestId = urlParams.get('site_request_id');
 
   useEffect(() => {
     if (countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
     } else {
-      // Redirect to customer portal sign-up
-      navigate(createPageUrl('Auth'));
+        // Redirect to Auth with siteRequestId so it can be linked after signup
+        navigate(createPageUrl('Auth') + `?site_request_id=${siteRequestId}`);
     }
   }, [countdown, navigate, businessId]);
 
@@ -44,6 +44,14 @@ export default function Success() {
               <code className="text-xs text-gray-800 font-mono break-all">
                 {sessionId}
               </code>
+            </div>
+          )}
+
+          {siteRequestId && (
+            <div className="bg-blue-50 rounded-lg p-3 mb-6 border border-blue-200">
+              <p className="text-xs text-blue-700 font-semibold">
+                Your website ID: {siteRequestId}
+              </p>
             </div>
           )}
 

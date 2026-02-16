@@ -58,6 +58,7 @@ import Success from './pages/Success';
 import CustomerDashboard from './pages/CustomerDashboard';
 import Auth from './pages/Auth';
 import HeroEditor from './pages/HeroEditor';
+import ImageManager from './pages/ImageManager';
 import __Layout from './Layout.jsx';
 
 
@@ -73,6 +74,7 @@ export const PAGES = {
     "CustomerDashboard": CustomerDashboard,
     "Auth": Auth,
     "HeroEditor": HeroEditor,
+    "ImageManager": ImageManager,
 }
 
 export const pagesConfig = {

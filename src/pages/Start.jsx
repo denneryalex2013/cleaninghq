@@ -125,7 +125,13 @@ ${formData.existing_website_url ? 'Use the reference website for content inspira
           response_json_schema: {
             type: "object",
             properties: {
-              hero: { type: "object" },
+              hero: { 
+                type: "object",
+                properties: {
+                  headline: { type: "string" },
+                  subheadline: { type: "string" }
+                }
+              },
               trust_bar: { type: "array" },
               services: { type: "object" },
               about: { type: "object" },

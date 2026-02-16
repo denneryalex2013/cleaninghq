@@ -18,7 +18,7 @@ export default function Footer({
           {/* Logo & Info */}
           <div>
             {logo ? (
-              <img src={logo} alt={companyName} className="h-12 w-auto mb-4" />
+              <img src={logo} alt={companyName} className="h-12 w-auto mb-4 brightness-0 invert" />
             ) : (
               <div className="text-2xl font-bold mb-4">{companyName}</div>
             )}

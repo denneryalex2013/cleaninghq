@@ -10,13 +10,17 @@ export default function Hero({
   insured,
   yearsInBusiness,
   googleRating,
-  backgroundImage = 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1920&q=80'
+  reviewCount,
+  reviewsVerified,
+  backgroundImage
 }) {
+  // Image priority: user uploaded > scraped > fallback
+  const heroImage = backgroundImage || 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1920&q=80';
   return (
     <section 
       className="relative h-screen flex items-center justify-center text-white"
       style={{ 
-        backgroundImage: `url(${backgroundImage})`,
+        backgroundImage: `url(${heroImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center'
       }}
@@ -61,10 +65,10 @@ export default function Hero({
               <span className="font-semibold">{yearsInBusiness}+ Years</span>
             </div>
           )}
-          {googleRating > 0 && (
+          {googleRating >= 4.5 && reviewsVerified && (
             <div className="flex items-center gap-2">
               <Star className="w-6 h-6 fill-yellow-400 text-yellow-400" />
-              <span className="font-semibold">{googleRating} Star Rated</span>
+              <span className="font-semibold">{googleRating} Stars{reviewCount ? ` (${reviewCount} reviews)` : ''}</span>
             </div>
           )}
         </div>

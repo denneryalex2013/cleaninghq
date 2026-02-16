@@ -89,7 +89,10 @@ export default function Preview() {
     primaryColor,
     insured: siteRequest.insured,
     yearsInBusiness: siteRequest.years_in_business,
-    googleRating: siteRequest.google_rating
+    googleRating: siteRequest.google_rating,
+    reviewCount: siteRequest.google_review_count,
+    reviewsVerified: siteRequest.reviews_verified,
+    backgroundImage: siteRequest.hero_image_url || siteRequest.gallery_images?.[0]
   };
 
   const servicesProps = {
@@ -116,7 +119,7 @@ export default function Preview() {
 
   const footerProps = {
     companyName: siteRequest.company_name,
-    logo: siteRequest.logo,
+    logo: siteRequest.logo_url || siteRequest.logo,
     tagline: content.footer?.tagline,
     services: siteRequest.service_types || [],
     phone: siteRequest.phone,
@@ -149,8 +152,8 @@ export default function Preview() {
       }`}>
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {siteRequest.logo ? (
-              <img src={siteRequest.logo} alt={siteRequest.company_name} className="h-12 w-auto" />
+            {(siteRequest.logo_url || siteRequest.logo) ? (
+              <img src={siteRequest.logo_url || siteRequest.logo} alt={siteRequest.company_name} className="h-12 w-auto" />
             ) : (
               <div className="text-2xl font-bold" style={{ color: isSticky ? primaryColor : 'white' }}>
                 {siteRequest.company_name}
@@ -177,9 +180,14 @@ export default function Preview() {
       <Hero {...heroProps} />
       <TrustBar primaryColor={primaryColor} tertiaryColor={tertiaryColor} />
       <Services {...servicesProps} />
-      <About {...aboutProps} />
+      <About {...aboutProps} image={siteRequest.gallery_images?.[1]} />
       <Benefits benefits={content.benefits} primaryColor={primaryColor} />
-      <Testimonials testimonials={content.testimonials} tertiaryColor={tertiaryColor} />
+      <Testimonials 
+        testimonials={content.testimonials} 
+        googleReviews={siteRequest.google_reviews}
+        reviewsVerified={siteRequest.reviews_verified}
+        tertiaryColor={tertiaryColor} 
+      />
       <CTA {...ctaProps} />
       <Footer {...footerProps} />
     </div>

@@ -1,14 +1,21 @@
 import React from 'react';
 import { Star } from 'lucide-react';
 
-export default function Testimonials({ testimonials, tertiaryColor }) {
-  const defaultTestimonials = [
-    { name: 'Sarah Johnson', text: 'Outstanding service! My office has never looked better. The team is professional and thorough.', rating: 5 },
-    { name: 'Mike Rodriguez', text: 'Reliable and affordable. They transformed our home. Highly recommend!', rating: 5 },
-    { name: 'Emily Chen', text: 'Best cleaning service in town. Always on time and do an amazing job.', rating: 5 }
-  ];
-
-  const items = testimonials || defaultTestimonials;
+export default function Testimonials({ testimonials, googleReviews, reviewsVerified, tertiaryColor }) {
+  // Priority: Real Google reviews (if verified) > AI generated testimonials > default testimonials
+  let items = [];
+  
+  if (reviewsVerified && googleReviews?.length > 0) {
+    items = googleReviews.slice(0, 3);
+  } else if (testimonials?.length > 0) {
+    items = testimonials.slice(0, 3);
+  } else {
+    items = [
+      { name: 'Sarah Johnson', text: 'Outstanding service! My office has never looked better. The team is professional and thorough.', rating: 5 },
+      { name: 'Mike Rodriguez', text: 'Reliable and affordable. They transformed our home. Highly recommend!', rating: 5 },
+      { name: 'Emily Chen', text: 'Best cleaning service in town. Always on time and do an amazing job.', rating: 5 }
+    ];
+  }
 
   return (
     <section className="py-32 px-4" style={{ backgroundColor: tertiaryColor }}>

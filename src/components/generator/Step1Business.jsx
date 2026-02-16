@@ -15,9 +15,10 @@ export default function Step1Business({ formData, setFormData, onNext }) {
     setUploading(true);
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      setFormData({ ...formData, logo: file_url });
+      setFormData({ ...formData, logo_url: file_url, logo: file_url });
     } catch (error) {
       console.error('Upload error:', error);
+      alert('Failed to upload logo. Please try again.');
     } finally {
       setUploading(false);
     }
@@ -139,16 +140,16 @@ export default function Step1Business({ formData, setFormData, onNext }) {
             Company Logo (Optional)
           </Label>
           <div className="mt-1.5">
-            {formData.logo ? (
+            {formData.logo_url ? (
               <div className="flex items-center gap-4 p-4 border-2 border-dashed border-gray-300 rounded-lg">
-                <img src={formData.logo} alt="Logo" className="w-16 h-16 object-contain" />
+                <img src={formData.logo_url} alt="Logo" className="w-16 h-16 object-contain" />
                 <div className="flex-1">
                   <p className="text-sm text-gray-700 font-medium">Logo uploaded</p>
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => setFormData({ ...formData, logo: '' })}
+                    onClick={() => setFormData({ ...formData, logo_url: '' })}
                     className="text-red-600 hover:text-red-700 px-0"
                   >
                     Remove
@@ -173,6 +174,22 @@ export default function Step1Business({ formData, setFormData, onNext }) {
               </label>
             )}
           </div>
+        </div>
+
+        <div>
+          <Label className="text-sm font-medium text-gray-700 mb-2 block">
+            Google Business Profile Link (Optional)
+          </Label>
+          <Input
+            type="url"
+            value={formData.google_business_url || ''}
+            onChange={(e) => setFormData({ ...formData, google_business_url: e.target.value })}
+            placeholder="https://g.page/your-business"
+            className="mt-1.5 h-12 text-base"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            We'll automatically import your rating and reviews
+          </p>
         </div>
       </div>
 

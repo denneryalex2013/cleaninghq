@@ -85,20 +85,7 @@ export default function Preview() {
   const content = siteRequest.generated_content || {};
   const pages = content.pages || {};
   
-  if (!pages || Object.keys(pages).length === 0) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Website Ready!</h2>
-          <p className="text-gray-600 mb-6">Your AI-powered website is being optimized...</p>
-          <Button onClick={() => window.location.reload()} variant="outline">
-            Refresh Page
-          </Button>
-        </div>
-      </div>
-    );
-  }
+
 
   const primaryColor = siteRequest.primary_color || '#14b8a6';
   const secondaryColor = siteRequest.secondary_color || '#0ea5e9';

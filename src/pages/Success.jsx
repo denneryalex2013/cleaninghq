@@ -19,12 +19,15 @@ export default function Success() {
     if (countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
-    } else if (siteRequestId) {
-          // Go straight to dashboard
-          navigate(createPageUrl('Dashboard') + `?id=${siteRequestId}`);
+    } else {
+      // Always go to Dashboard if we have the site ID (webhook will ensure subscription is active)
+      if (siteRequestId) {
+        navigate(createPageUrl('Dashboard') + `?id=${siteRequestId}`);
       } else {
-          navigate(createPageUrl('Home'));
+        // Fallback if somehow site_request_id is missing
+        navigate(createPageUrl('Home'));
       }
+    }
   }, [countdown, navigate, siteRequestId]);
 
   return (

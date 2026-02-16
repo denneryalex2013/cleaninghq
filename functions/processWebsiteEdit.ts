@@ -9,11 +9,6 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Missing required parameters' }, { status: 400 });
         }
 
-        const user = await base44.auth.me();
-        if (!user) {
-            return Response.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
         // Load site request
         const sites = await base44.asServiceRole.entities.SiteRequest.filter({ id: siteRequestId });
         if (sites.length === 0) {

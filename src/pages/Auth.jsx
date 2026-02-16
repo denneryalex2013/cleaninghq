@@ -15,6 +15,19 @@ export default function Auth() {
       try {
         const user = await base44.auth.me();
         if (user) {
+          // Check if there's a site_request_id to link
+          const urlParams = new URLSearchParams(window.location.search);
+          const siteRequestId = urlParams.get('site_request_id');
+          
+          if (siteRequestId) {
+            // Link the site request to this user
+            await base44.entities.SiteRequest.update(siteRequestId, {
+              user_id: user.id,
+              owner_email: user.email,
+              subscription_status: 'active'
+            });
+          }
+          
           navigate(createPageUrl('CustomerDashboard'));
         }
       } catch (error) {

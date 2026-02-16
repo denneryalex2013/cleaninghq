@@ -90,8 +90,8 @@ export default function Preview() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Generating Your Website</h2>
-          <p className="text-gray-600 mb-6">Your AI-powered website is being created. This usually takes 2-5 minutes...</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Website Ready!</h2>
+          <p className="text-gray-600 mb-6">Your AI-powered website is being optimized...</p>
           <Button onClick={() => window.location.reload()} variant="outline">
             Refresh Page
           </Button>

@@ -159,7 +159,10 @@ CRITICAL: Generate complete, detailed content for ALL pages. Each service page m
                                 type: "object",
                                 properties: {
                                     homepage: { type: "object" },
-                                    services: { type: "array" },
+                                    services: { 
+                                        type: "array",
+                                        items: { type: "object" }
+                                    },
                                     contact: { type: "object" }
                                 }
                             }

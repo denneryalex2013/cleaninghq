@@ -407,6 +407,7 @@ export default function Home() {
           <p>© 2026 CleaningHQ. All rights reserved. Built for cleaning professionals who want to grow.</p>
         </div>
       </div>
-    </div>
-  );
-}
+      </div>
+      </>
+      );
+      }

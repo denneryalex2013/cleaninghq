@@ -15,6 +15,7 @@ Deno.serve(async (req) => {
 
         const session = await stripe.checkout.sessions.create({
             mode: 'subscription',
+            payment_method_types: ['card'],
             line_items: [
                 {
                     price: 'price_1T1EGzK8mU2g6s92CcF6yY2V',
@@ -22,8 +23,8 @@ Deno.serve(async (req) => {
                 },
             ],
             customer_email: email,
-            success_url: `https://preview.cleaninghq.io/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: 'https://preview.cleaninghq.io/cancel',
+            success_url: `${req.headers.get('origin') || 'https://preview.cleaninghq.io'}/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${req.headers.get('origin') || 'https://preview.cleaninghq.io'}/cancel`,
             metadata: {
                 businessId: businessId,
             },

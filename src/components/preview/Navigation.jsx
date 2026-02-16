@@ -25,7 +25,7 @@ export default function Navigation({ companyName, logo, phone, primaryColor, ser
   
   const getServiceRoute = (service) => {
     const serviceSlug = service.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '');
-    return `/${serviceSlug}-${citySlug}`;
+    return `?page=${serviceSlug}-${citySlug}`;
   };
 
   return (
@@ -71,7 +71,7 @@ export default function Navigation({ companyName, logo, phone, primaryColor, ser
           </DropdownMenu>
 
           <Link 
-            to="/contact" 
+            to="?page=contact" 
             className={`font-semibold hover:opacity-70 transition-opacity ${
               isSticky ? 'text-gray-900' : 'text-white'
             }`}
@@ -87,7 +87,7 @@ export default function Navigation({ companyName, logo, phone, primaryColor, ser
           </a>
         </nav>
 
-        <Link to="/get-a-quote">
+        <Link to="?page=get-a-quote">
           <Button 
             className="font-bold"
             style={{ backgroundColor: primaryColor }}

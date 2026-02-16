@@ -19,8 +19,8 @@ export default function Services({ services, primaryColor }) {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {services.map((service, idx) => {
-            const serviceSlug = service.title.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '');
-            const serviceLink = recordId ? `?id=${recordId}&page=${serviceSlug}` : `?page=${serviceSlug}`;
+            const slug = service.slug || service.title.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '');
+            const serviceLink = recordId ? `?id=${recordId}&page=${slug}` : `?page=${slug}`;
             
             return (
               <a 

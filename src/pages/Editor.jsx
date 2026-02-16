@@ -81,8 +81,8 @@ export default function Editor() {
       setInput('');
 
       const response = await base44.functions.invoke('processWebsiteEdit', {
-        site_request_id: recordId,
-        message: messageText,
+        siteRequestId: recordId,
+        editRequest: messageText,
         file_url: fileUrl
       });
 

@@ -21,10 +21,14 @@ export default function Auth() {
           
           if (siteRequestId) {
             // Link the site request to this user
-            await base44.entities.SiteRequest.update(siteRequestId, {
-              user_id: user.id,
-              owner_email: user.email
-            });
+            try {
+              await base44.entities.SiteRequest.update(siteRequestId, {
+                user_id: user.id,
+                owner_email: user.email
+              });
+            } catch (err) {
+              console.error('Failed to link site:', err);
+            }
             // Redirect to specific site dashboard after linking
             navigate(createPageUrl('Dashboard') + `?id=${siteRequestId}`);
           } else {

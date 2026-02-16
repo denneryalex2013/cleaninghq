@@ -173,7 +173,7 @@ CRITICAL: Generate complete, detailed content for ALL pages. Each service page m
                 // Update site request with generated content
                 await base44.asServiceRole.entities.SiteRequest.update(site.id, {
                     generated_content: {
-                        ...generatedContent,
+                        pages: generatedContent.pages,
                         generated_at: new Date().toISOString(),
                         version: '2.0',
                         brand: {

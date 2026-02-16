@@ -165,19 +165,26 @@ footer: {
 }
 
 pages: {
-  [service_route]: {
-    headline: "Service page headline",
-    subheadline: "Service page subheadline",
-    description_title: "About section title",
-    description: "Detailed service description",
-    benefits: ["benefit 1", "benefit 2", "benefit 3", "benefit 4"],
+  ${formData.service_types.map(service => {
+    const key = service.toLowerCase().replace(/\s+/g, '_').replace(/\//g, '');
+    return `"${key}": {
+    headline: "SEO-optimized headline with ${formData.city}",
+    subheadline: "Compelling subheadline",
+    description_title: "About This Service",
+    description: "4-5 sentences, benefit-driven, mentions ${formData.city} and ${formData.state}",
+    benefits: ["Specific benefit 1", "Specific benefit 2", "Specific benefit 3", "Specific benefit 4"],
     why_choose_us: [
-      {title: "Title", desc: "Description"}
+      {title: "Reason 1", desc: "Detail"},
+      {title: "Reason 2", desc: "Detail"},
+      {title: "Reason 3", desc: "Detail"}
     ]
-  }
+  }`;
+  }).join(',\n  ')}
 }
 
-Generate unique content for each service in service_types: ${formData.service_types.join(', ')}
+IMPORTANT: Generate detailed, unique content for each service page. Each service must have its own entry in the pages object using underscore-separated lowercase keys (e.g., "residential_cleaning", "commercial_cleaning").
+
+Services to generate pages for: ${formData.service_types.join(', ')}
 
 ${formData.existing_website_url ? 'Use the reference website for content inspiration but create fresh, professional copy.' : 'Create compelling, professional copy that converts.'}`;
 

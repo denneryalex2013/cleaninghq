@@ -30,8 +30,14 @@ export default function Dashboard() {
             setSiteRequest(requests[0]);
           }
         } else if (currentUser) {
-          // Load user's most recently updated site
-          const userSites = await base44.entities.SiteRequest.filter({ user_id: currentUser.id }, '-updated_date', 1);
+          // Try to find site by user_id first, then by owner_email
+          let userSites = await base44.entities.SiteRequest.filter({ user_id: currentUser.id }, '-updated_date', 1);
+          
+          // Fallback: find by owner_email if no user_id match (handles post-payment linking)
+          if (userSites.length === 0) {
+            userSites = await base44.entities.SiteRequest.filter({ owner_email: currentUser.email }, '-updated_date', 1);
+          }
+          
           if (userSites.length > 0) {
             setSiteRequest(userSites[0]);
             // Update URL to include the site ID for consistency

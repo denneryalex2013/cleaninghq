@@ -32,21 +32,23 @@ Deno.serve(async (req) => {
         if (event.type === 'checkout.session.completed') {
             const session = event.data.object;
             const siteRequestId = session.metadata?.siteRequestId;
+            const customerEmail = session.customer_email;
 
             if (!siteRequestId) {
                 console.warn('Checkout session completed but no siteRequestId in metadata');
                 return Response.json({ received: true });
             }
 
-            // Update the SiteRequest with Stripe info and activate subscription
+            // Update the SiteRequest with Stripe info, email, and activate subscription
             await base44.asServiceRole.entities.SiteRequest.update(siteRequestId, {
                 stripe_customer_id: session.customer,
                 stripe_session_id: session.id,
                 subscription_status: 'active',
-                status: 'active'
+                status: 'active',
+                owner_email: customerEmail
             });
 
-            console.log(`✅ Activated subscription for SiteRequest: ${siteRequestId}`);
+            console.log(`✅ Activated subscription for SiteRequest: ${siteRequestId}, owner_email: ${customerEmail}`);
         }
 
         if (event.type === 'customer.subscription.created') {

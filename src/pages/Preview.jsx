@@ -153,9 +153,9 @@ export default function Preview() {
       <TrustBar primaryColor={primaryColor} tertiaryColor={tertiaryColor} />
       <Services {...servicesProps} />
       <About {...aboutProps} image={siteRequest.gallery_images?.[1]} />
-      <Benefits benefits={content.benefits} primaryColor={primaryColor} />
+      <Benefits benefits={pages.homepage?.benefits || content.benefits} primaryColor={primaryColor} />
       <Testimonials 
-        testimonials={content.testimonials} 
+        testimonials={pages.homepage?.testimonials || content.testimonials} 
         googleReviews={siteRequest.google_reviews}
         reviewsVerified={siteRequest.reviews_verified}
         tertiaryColor={tertiaryColor} 

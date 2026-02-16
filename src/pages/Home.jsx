@@ -30,9 +30,9 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
           <div className="text-white font-bold text-xl">CleaningHQ</div>
           <div className="flex items-center gap-4">
-            <a href="tel:+1555123456" className="flex items-center gap-2 text-white hover:text-[#28A745] transition-colors">
+            <a href="tel:+16168280705" className="flex items-center gap-2 text-white hover:text-[#28A745] transition-colors">
               <Phone className="w-4 h-4" />
-              <span className="font-semibold">(555) 123-456</span>
+              <span className="font-semibold">(616) 828-0705</span>
             </a>
           </div>
         </div>

@@ -16,10 +16,13 @@ export default function Success() {
     if (countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
-    } else {
-        // Redirect to Auth with siteRequestId so it can be linked after signup
-        navigate(createPageUrl('Auth') + `?site_request_id=${siteRequestId}`);
-    }
+    } else if (siteRequestId) {
+          // Redirect to Auth with siteRequestId so it can be linked after signup
+          navigate(createPageUrl('Auth') + `?site_request_id=${siteRequestId}`);
+      } else {
+          // No site request, go to home
+          navigate(createPageUrl('Home'));
+      }
   }, [countdown, navigate, businessId]);
 
   return (

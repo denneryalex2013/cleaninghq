@@ -23,12 +23,14 @@ export default function Auth() {
             // Link the site request to this user
             await base44.entities.SiteRequest.update(siteRequestId, {
               user_id: user.id,
-              owner_email: user.email,
-              subscription_status: 'active'
+              owner_email: user.email
             });
+            // Redirect to specific site dashboard after linking
+            navigate(createPageUrl('Dashboard') + `?id=${siteRequestId}`);
+          } else {
+            // No site request to link, go to general dashboard
+            navigate(createPageUrl('Dashboard'));
           }
-          
-          navigate(createPageUrl('CustomerDashboard'));
         }
       } catch (error) {
         console.log('Not authenticated');

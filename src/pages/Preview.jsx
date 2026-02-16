@@ -85,6 +85,21 @@ export default function Preview() {
   const content = siteRequest.generated_content || {};
   const pages = content.pages || {};
 
+  // Check if pages object exists - if not, show error
+  if (!pages || Object.keys(pages).length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Website Still Generating</h1>
+          <p className="text-gray-600 mb-6">Your website content is being created by AI. Please check back in a moment.</p>
+          <Button onClick={() => window.location.reload()}>
+            Refresh Page
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   // Check service pages structure FIRST
   const servicePages = content.pages?.services || [];
   const hasNewStructure = servicePages.length > 0;

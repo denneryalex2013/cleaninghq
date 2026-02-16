@@ -23,17 +23,19 @@ export default function Dashboard() {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
 
-        // If recordId is provided, load that site
+        // Always use recordId if provided, otherwise find user's site
         if (recordId) {
           const requests = await base44.entities.SiteRequest.filter({ id: recordId });
           if (requests.length > 0) {
             setSiteRequest(requests[0]);
           }
         } else if (currentUser) {
-          // Otherwise, load user's first site
-          const userSites = await base44.entities.SiteRequest.filter({ user_id: currentUser.id });
+          // Load user's most recently updated site
+          const userSites = await base44.entities.SiteRequest.filter({ user_id: currentUser.id }, '-updated_date', 1);
           if (userSites.length > 0) {
             setSiteRequest(userSites[0]);
+            // Update URL to include the site ID for consistency
+            window.history.replaceState({}, '', createPageUrl('Dashboard') + `?id=${userSites[0].id}`);
           }
         }
       } catch (error) {

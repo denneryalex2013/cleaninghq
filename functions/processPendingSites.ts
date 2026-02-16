@@ -170,18 +170,14 @@ CRITICAL: Generate complete, detailed content for ALL pages. Each service page m
                     }
                 });
 
+                // Validate that pages structure exists
+                if (!generatedContent?.pages) {
+                    throw new Error('LLM response missing pages structure');
+                }
+
                 // Update site request with generated content
                 await base44.asServiceRole.entities.SiteRequest.update(site.id, {
-                    generated_content: {
-                        pages: generatedContent.pages,
-                        generated_at: new Date().toISOString(),
-                        version: '2.0',
-                        brand: {
-                            primary_color: site.primary_color,
-                            secondary_color: site.secondary_color,
-                            tertiary_color: site.tertiary_color
-                        }
-                    },
+                    generated_content: generatedContent,
                     status: 'generated'
                 });
 

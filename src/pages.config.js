@@ -56,6 +56,7 @@ import Preview from './pages/Preview';
 import Start from './pages/Start';
 import Success from './pages/Success';
 import CustomerDashboard from './pages/CustomerDashboard';
+import Auth from './pages/Auth';
 import __Layout from './Layout.jsx';
 
 
@@ -69,6 +70,7 @@ export const PAGES = {
     "Start": Start,
     "Success": Success,
     "CustomerDashboard": CustomerDashboard,
+    "Auth": Auth,
 }
 
 export const pagesConfig = {

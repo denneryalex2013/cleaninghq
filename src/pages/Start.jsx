@@ -21,6 +21,7 @@ export default function Start() {
     state: '',
     existing_website_url: '',
     service_types: [],
+    industries_served: [],
     services: [],
     years_in_business: 0,
     insured: undefined,
@@ -90,20 +91,39 @@ export default function Start() {
           tone = 'Use a professional, logic-driven tone focusing on "compliance," "operational efficiency," and "risk mitigation"';
         }
 
+        // Industry-specific messaging
+        const industryContext = formData.industries_served?.length > 0 ? `
+      INDUSTRIES SERVED: ${formData.industries_served.join(', ')}
+
+      INDUSTRY-SPECIFIC REQUIREMENTS:
+      ${formData.industries_served.includes('Medical & Healthcare') ? '- Medical: Emphasize infection control, hospital-grade disinfectants, HIPAA/OSHA compliance, bloodborne pathogen protocols' : ''}
+      ${formData.industries_served.includes('Industrial & Manufacturing') ? '- Industrial: Highlight heavy machinery safety, degreasing, pressure washing, hazardous waste handling' : ''}
+      ${formData.industries_served.includes('Legal & Professional Offices') ? '- Legal: Focus on confidentiality, professional image, background-checked staff for data security' : ''}
+      ${formData.industries_served.includes('Food Service & Hospitality') ? '- Food Service: Stress sanitation, pest prevention, grease trap cleaning, FDA/Health Dept. standards' : ''}
+      ${formData.industries_served.includes('Retail & Showroom') ? '- Retail: Emphasize aesthetics, high foot traffic handling, floor buffing, window polishing, brand image maintenance' : ''}
+      ${formData.industries_served.includes('Educational (Schools/Daycare)') ? '- Educational: Focus on germ reduction, non-toxic "green" cleaners safe for children, high-touch surface sanitization' : ''}
+      ${formData.industries_served.includes('Data Centers & IT') ? '- Data Centers: Highlight dust-free environments, anti-static cleaning, HEPA vacuuming, delicate hardware care' : ''}
+      ${formData.industries_served.includes('Post-Construction (Commercial)') ? '- Post-Construction: Emphasize debris removal, safety, drywall dust clearing, paint overspray cleanup' : ''}
+      ${formData.industries_served.includes('Gym & Fitness') ? '- Gym: Focus on odor control, sweat removal, equipment sanitization, fungi and staph infection prevention' : ''}
+
+      IMPORTANT: Integrate these industry-specific pain points and solutions naturally throughout ALL content - headlines, descriptions, benefits, and testimonials.
+      ` : '';
+
         const aiPrompt = `You are a Senior Conversion Rate Optimization (CRO) Expert and B2B SaaS Designer specialized in the cleaning industry.
 
-Generate a high-performance website for ${formData.company_name} based in ${formData.city}, ${formData.state}.
+        Generate a high-performance website for ${formData.company_name} based in ${formData.city}, ${formData.state}.
 
-COMPANY INFO:
-- Name: ${formData.company_name}
-- Location: ${formData.city}, ${formData.state}
-- Services: ${formData.service_types.join(', ')}
-- Years in Business: ${formData.years_in_business || 'New'}
-- Insured: ${formData.insured ? 'Yes' : 'Not specified'}
-- Google Rating: ${formData.google_rating || 'Not specified'}
-${formData.existing_website_url ? `- Reference Website: ${formData.existing_website_url}` : ''}
+        COMPANY INFO:
+        - Name: ${formData.company_name}
+        - Location: ${formData.city}, ${formData.state}
+        - Services: ${formData.service_types.join(', ')}
+        - Years in Business: ${formData.years_in_business || 'New'}
+        - Insured: ${formData.insured ? 'Yes' : 'Not specified'}
+        - Google Rating: ${formData.google_rating || 'Not specified'}
+        ${formData.existing_website_url ? `- Reference Website: ${formData.existing_website_url}` : ''}
 
-TONE: ${tone}
+        TONE: ${tone}
+        ${industryContext}
 
 CRITICAL RULES:
 1. Hero Section must use "Benefit-First" headline formula: [Desired Outcome] + [Timeframe] + [Objection Handle]
@@ -131,33 +151,44 @@ ${hasCommercial ? `- Commercial: "The reliable partner for ${formData.city} busi
 
 Generate content following this exact structure:
 
-hero: {
-  headline: (48-64px size, benefit-driven, mentions location),
-  subheadline: (20-28px, builds trust, mentions coverage area)
+seo: {
+  homepage: {
+    meta_title: "60-character SEO title with primary keyword and ${formData.city}",
+    meta_description: "150-character description with benefits and location",
+    focus_keyword: "primary service + ${formData.city}"
+  }
 }
 
-trust_bar: [4 short trust statements]
+hero: {
+  headline: (48-64px size, benefit-driven, mentions location and industry pain points if applicable),
+  subheadline: (20-28px, builds trust, mentions coverage area and industry credentials),
+  image_alt: "Descriptive alt text for hero image mentioning service and location"
+}
+
+trust_bar: [4 short trust statements including industry certifications if applicable]
 
 services: {
-  [service_name]: "2-3 sentence description"
+  [service_name]: "2-3 sentence description incorporating industry-specific requirements"
 }
 
 about: {
   title: "Compelling headline",
-  text: "3-4 sentences establishing authority"
+  text: "3-4 sentences establishing authority and industry expertise",
+  image_alt: "Alt text for about section image"
 }
 
 benefits: [
-  {title: "Benefit title", description: "Benefit description"}
+  {title: "Benefit title", description: "Benefit description with industry focus", icon_alt: "Icon description"}
 ] (6 benefits)
 
 testimonials: [
-  {name: "Customer name", text: "Testimonial quote", rating: 5}
+  {name: "Customer name", text: "Testimonial quote mentioning specific industry results", rating: 5, industry: "Industry type if applicable"}
 ] (3 testimonials)
 
 cta: {
   headline: "Action headline",
-  subheadline: "Supporting text"
+  subheadline: "Supporting text",
+  image_alt: "CTA section image alt text"
 }
 
 footer: {
@@ -168,16 +199,23 @@ pages: {
   ${formData.service_types.map(service => {
     const key = service.toLowerCase().replace(/\s+/g, '_').replace(/\//g, '');
     return `"${key}": {
-    headline: "SEO-optimized headline with ${formData.city}",
-    subheadline: "Compelling subheadline",
+    seo: {
+      meta_title: "60-char SEO title: ${service} in ${formData.city} | ${formData.company_name}",
+      meta_description: "150-char description with benefits, location, and industry focus",
+      focus_keyword: "${service.toLowerCase()} ${formData.city.toLowerCase()}"
+    },
+    headline: "SEO-optimized headline with ${formData.city} and industry pain point",
+    subheadline: "Compelling subheadline addressing industry concerns",
     description_title: "About This Service",
-    description: "4-5 sentences, benefit-driven, mentions ${formData.city} and ${formData.state}",
-    benefits: ["Specific benefit 1", "Specific benefit 2", "Specific benefit 3", "Specific benefit 4"],
+    description: "4-5 sentences, benefit-driven, mentions ${formData.city}, ${formData.state}, and industry-specific solutions",
+    benefits: ["Industry-specific benefit 1", "Industry-specific benefit 2", "Industry-specific benefit 3", "Industry-specific benefit 4"],
     why_choose_us: [
-      {title: "Reason 1", desc: "Detail"},
-      {title: "Reason 2", desc: "Detail"},
-      {title: "Reason 3", desc: "Detail"}
-    ]
+      {title: "Reason 1 (industry-focused)", desc: "Detail with credentials"},
+      {title: "Reason 2 (industry-focused)", desc: "Detail with compliance"},
+      {title: "Reason 3 (industry-focused)", desc: "Detail with results"}
+    ],
+    hero_image_alt: "Alt text: Professional ${service.toLowerCase()} service in ${formData.city}",
+    section_image_alts: ["Alt text 1", "Alt text 2", "Alt text 3"]
   }`;
   }).join(',\n  ')}
 }

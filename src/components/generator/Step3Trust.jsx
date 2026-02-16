@@ -22,6 +22,52 @@ export default function Step3Trust({ formData, setFormData, onNext, onBack }) {
 
       <div className="space-y-5">
         <div>
+          <Label className="text-sm font-medium text-gray-700 mb-3 block">
+            Industries You Serve (Optional)
+          </Label>
+          <p className="text-xs text-gray-500 mb-3">Select all industries you specialize in to make your website appeal to those customers</p>
+          <div className="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
+            {[
+              { value: 'Medical & Healthcare', desc: 'Patient safety & infection control' },
+              { value: 'Industrial & Manufacturing', desc: 'Heavy machinery & worker safety' },
+              { value: 'Legal & Professional Offices', desc: 'Confidentiality & professional image' },
+              { value: 'Food Service & Hospitality', desc: 'Sanitation & pest prevention' },
+              { value: 'Retail & Showroom', desc: 'Aesthetics & high foot traffic' },
+              { value: 'Educational (Schools/Daycare)', desc: 'Germ reduction & non-toxic chemicals' },
+              { value: 'Data Centers & IT', desc: 'Dust-free environments' },
+              { value: 'Post-Construction (Commercial)', desc: 'Debris removal & safety' },
+              { value: 'Gym & Fitness', desc: 'Odor control & sweat removal' }
+            ].map((industry) => (
+              <label
+                key={industry.value}
+                className={`flex items-start gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all hover:bg-gray-50 ${
+                  formData.industries_served?.includes(industry.value)
+                    ? 'border-teal-600 bg-teal-50'
+                    : 'border-gray-200'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={formData.industries_served?.includes(industry.value) || false}
+                  onChange={(e) => {
+                    const current = formData.industries_served || [];
+                    const updated = e.target.checked
+                      ? [...current, industry.value]
+                      : current.filter(i => i !== industry.value);
+                    setFormData({ ...formData, industries_served: updated });
+                  }}
+                  className="mt-1 w-4 h-4 text-teal-600 rounded"
+                />
+                <div className="flex-1">
+                  <div className="font-semibold text-sm text-gray-900">{industry.value}</div>
+                  <div className="text-xs text-gray-500">{industry.desc}</div>
+                </div>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <div>
           <Label htmlFor="years_in_business" className="text-sm font-medium text-gray-700">
             Years in Business
           </Label>

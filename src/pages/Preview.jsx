@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { Phone } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Routes, Route, useLocation } from 'react-router-dom';
 import { createPageUrl } from '../utils';
+import Navigation from '../components/preview/Navigation';
 import Hero from '../components/preview/Hero';
 import TrustBar from '../components/preview/TrustBar';
 import Services from '../components/preview/Services';
@@ -12,23 +12,18 @@ import Benefits from '../components/preview/Benefits';
 import Testimonials from '../components/preview/Testimonials';
 import CTA from '../components/preview/CTA';
 import Footer from '../components/preview/Footer';
+import ServicePage from '../components/preview/ServicePage';
+import QuotePage from '../components/preview/QuotePage';
+import ContactPage from '../components/preview/ContactPage';
 
 export default function Preview() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [siteRequest, setSiteRequest] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isSticky, setIsSticky] = useState(false);
 
   const urlParams = new URLSearchParams(window.location.search);
   const recordId = urlParams.get('id');
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsSticky(window.scrollY > 100);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     const loadSiteRequest = async () => {
@@ -80,6 +75,7 @@ export default function Preview() {
   const secondaryColor = siteRequest.secondary_color || '#0ea5e9';
   const tertiaryColor = siteRequest.tertiary_color || '#f3f4f6';
   const content = siteRequest.generated_content || {};
+  const pages = content.pages || {};
 
   // Prepare component props
   const heroProps = {
@@ -128,6 +124,38 @@ export default function Preview() {
     state: siteRequest.state
   };
 
+  const serviceRouteMap = {
+    'Commercial Cleaning': 'commercial-cleaning',
+    'Residential Cleaning': 'residential-cleaning',
+    'Post-Construction Cleaning': 'post-construction-cleaning',
+    'Office Cleaning': 'office-cleaning',
+    'Medical Cleaning': 'medical-cleaning',
+    'Janitorial Services': 'janitorial-services',
+    'Airbnb Cleaning': 'airbnb-cleaning',
+    'Move-In / Move-Out Cleaning': 'move-in-move-out-cleaning',
+    'Floor Care': 'floor-care',
+    'Carpet Cleaning': 'carpet-cleaning',
+    'Pressure Washing': 'pressure-washing',
+    'Window Cleaning': 'window-cleaning'
+  };
+
+  const HomePage = () => (
+    <>
+      <Hero {...heroProps} />
+      <TrustBar primaryColor={primaryColor} tertiaryColor={tertiaryColor} />
+      <Services {...servicesProps} />
+      <About {...aboutProps} image={siteRequest.gallery_images?.[1]} />
+      <Benefits benefits={content.benefits} primaryColor={primaryColor} />
+      <Testimonials 
+        testimonials={content.testimonials} 
+        googleReviews={siteRequest.google_reviews}
+        reviewsVerified={siteRequest.reviews_verified}
+        tertiaryColor={tertiaryColor} 
+      />
+      <CTA {...ctaProps} />
+    </>
+  );
+
   return (
     <div className="min-h-screen bg-white">
       {/* PREVIEW MODE BANNER */}
@@ -146,49 +174,75 @@ export default function Preview() {
         </div>
       </div>
 
-      {/* SECTION 1: STICKY HEADER */}
-      <header className={`fixed top-12 left-0 right-0 z-40 transition-all duration-300 ${
-        isSticky ? 'bg-white shadow-lg' : 'bg-transparent'
-      }`}>
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {(siteRequest.logo_url || siteRequest.logo) ? (
-              <img src={siteRequest.logo_url || siteRequest.logo} alt={siteRequest.company_name} className="h-12 w-auto" />
-            ) : (
-              <div className="text-2xl font-bold" style={{ color: isSticky ? primaryColor : 'white' }}>
-                {siteRequest.company_name}
-              </div>
-            )}
-          </div>
-          <div className="flex items-center gap-4">
-            <a href={`tel:${siteRequest.phone}`} className={`hidden md:flex items-center gap-2 font-semibold ${
-              isSticky ? 'text-gray-900' : 'text-white'
-            }`}>
-              <Phone className="w-4 h-4" />
-              {siteRequest.phone}
-            </a>
-            <Button 
-              className="font-bold"
-              style={{ backgroundColor: primaryColor }}
-            >
-              Get a Quote
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <Hero {...heroProps} />
-      <TrustBar primaryColor={primaryColor} tertiaryColor={tertiaryColor} />
-      <Services {...servicesProps} />
-      <About {...aboutProps} image={siteRequest.gallery_images?.[1]} />
-      <Benefits benefits={content.benefits} primaryColor={primaryColor} />
-      <Testimonials 
-        testimonials={content.testimonials} 
-        googleReviews={siteRequest.google_reviews}
-        reviewsVerified={siteRequest.reviews_verified}
-        tertiaryColor={tertiaryColor} 
+      <Navigation 
+        companyName={siteRequest.company_name}
+        logo={siteRequest.logo_url || siteRequest.logo}
+        phone={siteRequest.phone}
+        primaryColor={primaryColor}
+        services={siteRequest.service_types || []}
       />
-      <CTA {...ctaProps} />
+
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        
+        {siteRequest.service_types?.map((service) => {
+          const route = serviceRouteMap[service];
+          if (!route) return null;
+          
+          return (
+            <Route 
+              key={service}
+              path={`/${route}`} 
+              element={
+                <ServicePage
+                  service={service}
+                  content={pages[route.replace(/-/g, '_')]}
+                  primaryColor={primaryColor}
+                  secondaryColor={secondaryColor}
+                  tertiaryColor={tertiaryColor}
+                  city={siteRequest.city}
+                  state={siteRequest.state}
+                  companyName={siteRequest.company_name}
+                  heroImage={siteRequest.hero_image_url || siteRequest.gallery_images?.[0]}
+                  testimonials={content.testimonials}
+                  reviewsVerified={siteRequest.reviews_verified}
+                  googleReviews={siteRequest.google_reviews}
+                />
+              } 
+            />
+          );
+        })}
+
+        <Route 
+          path="/get-a-quote" 
+          element={
+            <QuotePage
+              siteRequestId={siteRequest.id}
+              services={siteRequest.service_types || []}
+              primaryColor={primaryColor}
+              tertiaryColor={tertiaryColor}
+              companyName={siteRequest.company_name}
+              phone={siteRequest.phone}
+            />
+          } 
+        />
+
+        <Route 
+          path="/contact" 
+          element={
+            <ContactPage
+              companyName={siteRequest.company_name}
+              phone={siteRequest.phone}
+              email={siteRequest.email}
+              city={siteRequest.city}
+              state={siteRequest.state}
+              primaryColor={primaryColor}
+              tertiaryColor={tertiaryColor}
+            />
+          } 
+        />
+      </Routes>
+
       <Footer {...footerProps} />
     </div>
   );

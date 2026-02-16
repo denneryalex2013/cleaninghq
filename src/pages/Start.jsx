@@ -89,33 +89,48 @@ hero: {
   subheadline: (20-28px, builds trust, mentions coverage area)
 }
 
-trust_bar: [4 short trust statements like "Licensed", "Insured", "Locally Owned", "5-Star Rated"]
+trust_bar: [4 short trust statements]
 
 services: {
-  [service_name]: "2-3 sentence description focusing on benefits"
+  [service_name]: "2-3 sentence description"
 }
 
 about: {
   title: "Compelling headline",
-  text: "3-4 sentences establishing authority and trust"
+  text: "3-4 sentences establishing authority"
 }
 
 benefits: [
   {title: "Benefit title", description: "Benefit description"}
-] (6 benefits total)
+] (6 benefits)
 
 testimonials: [
   {name: "Customer name", text: "Testimonial quote", rating: 5}
 ] (3 testimonials)
 
 cta: {
-  headline: "Strong action-oriented headline",
+  headline: "Action headline",
   subheadline: "Supporting text"
 }
 
 footer: {
-  tagline: "Short company tagline"
+  tagline: "Company tagline"
 }
+
+pages: {
+  [service_route]: {
+    headline: "Service page headline",
+    subheadline: "Service page subheadline",
+    description_title: "About section title",
+    description: "Detailed service description",
+    benefits: ["benefit 1", "benefit 2", "benefit 3", "benefit 4"],
+    why_choose_us: [
+      {title: "Title", desc: "Description"}
+    ]
+  }
+}
+
+Generate unique content for each service in service_types: ${formData.service_types.join(', ')}
 
 ${formData.existing_website_url ? 'Use the reference website for content inspiration but create fresh, professional copy.' : 'Create compelling, professional copy that converts.'}`;
 
@@ -125,20 +140,15 @@ ${formData.existing_website_url ? 'Use the reference website for content inspira
           response_json_schema: {
             type: "object",
             properties: {
-              hero: { 
-                type: "object",
-                properties: {
-                  headline: { type: "string" },
-                  subheadline: { type: "string" }
-                }
-              },
+              hero: { type: "object" },
               trust_bar: { type: "array" },
               services: { type: "object" },
               about: { type: "object" },
               benefits: { type: "array" },
               testimonials: { type: "array" },
               cta: { type: "object" },
-              footer: { type: "object" }
+              footer: { type: "object" },
+              pages: { type: "object" }
             }
           }
         });

@@ -22,30 +22,40 @@ export default function Dashboard() {
       try {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
+        console.log('📊 Dashboard: Current user:', currentUser?.email, 'ID:', currentUser?.id);
 
         // Always use recordId if provided, otherwise find user's site
         if (recordId) {
+          console.log('📋 Dashboard: Using recordId from URL:', recordId);
           const requests = await base44.entities.SiteRequest.filter({ id: recordId });
           if (requests.length > 0) {
+            console.log('✅ Dashboard: Found site by ID');
             setSiteRequest(requests[0]);
           }
         } else if (currentUser) {
           // Try to find site by user_id first, then by owner_email
+          console.log('🔍 Dashboard: Querying by user_id:', currentUser.id);
           let userSites = await base44.entities.SiteRequest.filter({ user_id: currentUser.id }, '-updated_date', 1);
+          console.log('📌 Dashboard: Found by user_id:', userSites.length, 'sites');
           
           // Fallback: find by owner_email if no user_id match (handles post-payment linking)
           if (userSites.length === 0) {
+            console.log('🔍 Dashboard: No user_id match, querying by email:', currentUser.email);
             userSites = await base44.entities.SiteRequest.filter({ owner_email: currentUser.email }, '-updated_date', 1);
+            console.log('📌 Dashboard: Found by owner_email:', userSites.length, 'sites');
           }
           
           if (userSites.length > 0) {
+            console.log('✅ Dashboard: Site found:', userSites[0].company_name, 'ID:', userSites[0].id);
             setSiteRequest(userSites[0]);
             // Update URL to include the site ID for consistency
             window.history.replaceState({}, '', createPageUrl('Dashboard') + `?id=${userSites[0].id}`);
+          } else {
+            console.log('❌ Dashboard: NO SITES FOUND for this user');
           }
         }
       } catch (error) {
-        console.error('Error loading data:', error);
+        console.error('❌ Dashboard: Error loading data:', error);
       } finally {
         setLoading(false);
       }

@@ -10,7 +10,10 @@ export default function Success() {
 
   const urlParams = new URLSearchParams(window.location.search);
   const sessionId = urlParams.get('session_id');
-  const siteRequestId = urlParams.get('site_request_id');
+  let siteRequestId = urlParams.get('site_request_id');
+  
+  // Debug log
+  console.log('Success page - sessionId:', sessionId, 'siteRequestId:', siteRequestId);
 
   useEffect(() => {
     if (countdown > 0) {

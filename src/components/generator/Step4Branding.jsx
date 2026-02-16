@@ -29,7 +29,7 @@ const styleOptions = [
   { 
     value: 'Luxury', 
     description: 'Premium feel with elegant typography',
-    image: 'https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=400&q=80'
+    image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=400&q=80'
   },
   { 
     value: 'Bold', 

@@ -7,10 +7,10 @@ Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
         
-        const { businessId, email } = await req.json();
+        const { businessId, email, siteRequestId } = await req.json();
 
-        if (!businessId || !email) {
-            return Response.json({ error: 'businessId and email are required' }, { status: 400 });
+        if (!businessId || !email || !siteRequestId) {
+            return Response.json({ error: 'businessId, email, and siteRequestId are required' }, { status: 400 });
         }
 
         const origin = req.headers.get('origin') || 'https://app.base44.com';
@@ -26,10 +26,10 @@ Deno.serve(async (req) => {
                 },
             ],
             customer_email: email,
-            success_url: `${origin}${appPath}/Success?session_id={CHECKOUT_SESSION_ID}&business_id=${businessId}`,
+            success_url: `${origin}${appPath}/Success?session_id={CHECKOUT_SESSION_ID}&site_request_id=${siteRequestId}`,
             cancel_url: `${origin}${appPath}/Cancel`,
             metadata: {
-                businessId: businessId,
+                siteRequestId: siteRequestId,
             },
         });
 

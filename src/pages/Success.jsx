@@ -61,7 +61,7 @@ export default function Success() {
                 className="bg-teal-600 hover:bg-teal-700"
                 onClick={() => businessId ? navigate(createPageUrl('Editor') + `?id=${businessId}`) : navigate(createPageUrl('Home'))}
               >
-                Go to Dashboard
+                Edit My Website
               </Button>
               <Button
                 variant="outline"
@@ -72,7 +72,7 @@ export default function Success() {
             </div>
 
             <p className="text-sm text-gray-500 mt-6">
-              Redirecting to dashboard in {countdown} seconds...
+              Redirecting to editor in {countdown} seconds...
             </p>
           </div>
         </div>

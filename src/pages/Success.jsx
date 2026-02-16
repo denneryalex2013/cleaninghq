@@ -59,7 +59,7 @@ export default function Success() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button
                 className="bg-teal-600 hover:bg-teal-700"
-                onClick={() => businessId ? navigate(createPageUrl('Editor') + `?id=${businessId}`) : navigate(createPageUrl('Home'))}
+                onClick={() => navigate(createPageUrl('CustomerDashboard'))}
               >
                 Edit My Website
               </Button>

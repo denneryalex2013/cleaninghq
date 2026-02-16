@@ -124,19 +124,11 @@ export default function Preview() {
     state: siteRequest.state
   };
 
-  const serviceRouteMap = {
-    'Commercial Cleaning': 'commercial-cleaning',
-    'Residential Cleaning': 'residential-cleaning',
-    'Post-Construction Cleaning': 'post-construction-cleaning',
-    'Office Cleaning': 'office-cleaning',
-    'Medical Cleaning': 'medical-cleaning',
-    'Janitorial Services': 'janitorial-services',
-    'Airbnb Cleaning': 'airbnb-cleaning',
-    'Move-In / Move-Out Cleaning': 'move-in-move-out-cleaning',
-    'Floor Care': 'floor-care',
-    'Carpet Cleaning': 'carpet-cleaning',
-    'Pressure Washing': 'pressure-washing',
-    'Window Cleaning': 'window-cleaning'
+  const citySlug = siteRequest.city.toLowerCase().replace(/\s+/g, '-');
+  
+  const getServiceRoute = (service) => {
+    const serviceSlug = service.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '');
+    return `${serviceSlug}-${citySlug}`;
   };
 
   const HomePage = () => (
@@ -180,14 +172,15 @@ export default function Preview() {
         phone={siteRequest.phone}
         primaryColor={primaryColor}
         services={siteRequest.service_types || []}
+        city={siteRequest.city}
       />
 
       <Routes>
         <Route path="/" element={<HomePage />} />
         
         {siteRequest.service_types?.map((service) => {
-          const route = serviceRouteMap[service];
-          if (!route) return null;
+          const route = getServiceRoute(service);
+          const contentKey = service.toLowerCase().replace(/\s+/g, '_').replace(/\//g, '');
           
           return (
             <Route 
@@ -196,7 +189,7 @@ export default function Preview() {
               element={
                 <ServicePage
                   service={service}
-                  content={pages[route.replace(/-/g, '_')]}
+                  content={pages[contentKey]}
                   primaryColor={primaryColor}
                   secondaryColor={secondaryColor}
                   tertiaryColor={tertiaryColor}

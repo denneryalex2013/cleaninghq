@@ -28,7 +28,7 @@ export default function Hero({
       <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/50"></div>
       
       <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
-        <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+        <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight" itemProp="headline">
           {headline}
         </h1>
         <p className="text-xl md:text-3xl mb-10 text-gray-200">

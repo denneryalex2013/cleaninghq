@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, ArrowRight, Star } from 'lucide-react';
+import SEOHead from './SEOHead';
 
 export default function ServicePage({ 
   service,
@@ -34,8 +35,39 @@ export default function ServicePage({
     ? googleReviews.slice(0, 3)
     : testimonials?.slice(0, 3) || [];
 
+  const pageTitle = `${service} in ${city}, ${state} | ${companyName}`;
+  const pageDescription = content?.description?.substring(0, 155) || 
+    `Professional ${service.toLowerCase()} services in ${city}, ${state}. ${companyName} provides expert cleaning solutions. Get your free quote today!`;
+  const pageUrl = window.location.href;
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": service,
+    "provider": {
+      "@type": "LocalBusiness",
+      "name": companyName,
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": city,
+        "addressRegion": state
+      }
+    },
+    "areaServed": {
+      "@type": "City",
+      "name": city
+    },
+    "description": pageDescription
+  };
+
   return (
     <div className="pt-24">
+      <SEOHead 
+        title={pageTitle}
+        description={pageDescription}
+        url={pageUrl}
+        schema={schema}
+      />
       {/* Hero Section */}
       <section 
         className="relative py-32 px-4 text-white"
@@ -47,7 +79,7 @@ export default function ServicePage({
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/60"></div>
         <div className="relative max-w-5xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6" itemProp="headline">
             {content?.headline || `${service} in ${city}`}
           </h1>
           <p className="text-xl md:text-2xl mb-8">
@@ -68,9 +100,9 @@ export default function ServicePage({
       {/* Description Section */}
       <section className="py-24 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-8">
+          <p className="text-4xl md:text-5xl font-bold text-gray-900 mb-8">
             {content?.description_title || `About Our ${service}`}
-          </h2>
+          </p>
           <p className="text-xl text-gray-700 leading-relaxed">
             {content?.description || `We provide professional ${service.toLowerCase()} services in ${city}, ${state}. Our experienced team uses industry-leading equipment and eco-friendly products to deliver exceptional results every time.`}
           </p>
@@ -80,9 +112,9 @@ export default function ServicePage({
       {/* Benefits Section */}
       <section className="py-24 px-4" style={{ backgroundColor: tertiaryColor }}>
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-12 text-center">
+          <p className="text-4xl md:text-5xl font-bold text-gray-900 mb-12 text-center">
             What's Included
-          </h2>
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {benefits.map((benefit, idx) => (
               <div key={idx} className="flex items-center gap-4 bg-white rounded-xl p-6 shadow-md">
@@ -97,9 +129,9 @@ export default function ServicePage({
       {/* Why Choose Us */}
       <section className="py-24 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-12 text-center">
+          <p className="text-4xl md:text-5xl font-bold text-gray-900 mb-12 text-center">
             Why Choose {companyName}
-          </h2>
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {whyChooseUs.map((item, idx) => (
               <div key={idx} className="text-center p-6">
@@ -121,9 +153,9 @@ export default function ServicePage({
       {displayTestimonials.length > 0 && (
         <section className="py-24 px-4" style={{ backgroundColor: tertiaryColor }}>
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-12 text-center">
+            <p className="text-4xl md:text-5xl font-bold text-gray-900 mb-12 text-center">
               What Our Clients Say
-            </h2>
+            </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {displayTestimonials.map((testimonial, idx) => (
                 <div key={idx} className="bg-white rounded-2xl p-8 shadow-lg">
@@ -144,9 +176,9 @@ export default function ServicePage({
       {/* Service Area */}
       <section className="py-24 px-4 bg-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <p className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
             Serving {city} & Surrounding Areas
-          </h2>
+          </p>
           <p className="text-xl text-gray-700 mb-8">
             We proudly serve {city}, {state} and the surrounding communities with professional {service.toLowerCase()}.
           </p>
@@ -161,9 +193,9 @@ export default function ServicePage({
         }}
       >
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-5xl md:text-6xl font-bold mb-6">
+          <p className="text-5xl md:text-6xl font-bold mb-6">
             Ready to Get Started?
-          </h2>
+          </p>
           <p className="text-2xl mb-10 text-white/90">
             Get your free quote today for {service.toLowerCase()} in {city}
           </p>

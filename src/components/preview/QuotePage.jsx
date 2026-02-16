@@ -65,7 +65,7 @@ export default function QuotePage({ siteRequestId, services, primaryColor, terti
     <div className="min-h-screen pt-24 px-4" style={{ backgroundColor: tertiaryColor }}>
       <div className="max-w-3xl mx-auto py-12">
         <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Get a Free Quote</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4" itemProp="headline">Get a Free Quote</h1>
           <p className="text-xl text-gray-600 mb-8">
             Fill out the form below and we'll get back to you with a custom quote within 24 hours.
           </p>

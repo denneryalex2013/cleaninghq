@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export default function Navigation({ companyName, logo, phone, primaryColor, services = [] }) {
+export default function Navigation({ companyName, logo, phone, primaryColor, services = [], city = '' }) {
   const [isSticky, setIsSticky] = useState(false);
   const location = useLocation();
 
@@ -21,19 +21,11 @@ export default function Navigation({ companyName, logo, phone, primaryColor, ser
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const serviceRoutes = {
-    'Commercial Cleaning': '/commercial-cleaning',
-    'Residential Cleaning': '/residential-cleaning',
-    'Post-Construction Cleaning': '/post-construction-cleaning',
-    'Office Cleaning': '/office-cleaning',
-    'Medical Cleaning': '/medical-cleaning',
-    'Janitorial Services': '/janitorial-services',
-    'Airbnb Cleaning': '/airbnb-cleaning',
-    'Move-In / Move-Out Cleaning': '/move-in-move-out-cleaning',
-    'Floor Care': '/floor-care',
-    'Carpet Cleaning': '/carpet-cleaning',
-    'Pressure Washing': '/pressure-washing',
-    'Window Cleaning': '/window-cleaning'
+  const citySlug = city.toLowerCase().replace(/\s+/g, '-');
+  
+  const getServiceRoute = (service) => {
+    const serviceSlug = service.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '');
+    return `/${serviceSlug}-${citySlug}`;
   };
 
   return (
@@ -70,7 +62,7 @@ export default function Navigation({ companyName, logo, phone, primaryColor, ser
             <DropdownMenuContent>
               {services.map((service) => (
                 <DropdownMenuItem key={service} asChild>
-                  <Link to={serviceRoutes[service] || '#'}>
+                  <Link to={getServiceRoute(service)}>
                     {service}
                   </Link>
                 </DropdownMenuItem>

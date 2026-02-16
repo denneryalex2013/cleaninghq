@@ -16,7 +16,7 @@ export default function ContactPage({
     <div className="min-h-screen pt-24 px-4" style={{ backgroundColor: tertiaryColor }}>
       <div className="max-w-7xl mx-auto py-12">
         <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">Contact Us</h1>
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4" itemProp="headline">Contact Us</h1>
           <p className="text-xl text-gray-600">Get in touch with our team today</p>
         </div>
 

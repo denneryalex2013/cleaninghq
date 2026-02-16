@@ -73,16 +73,63 @@ export default function Start() {
       };
 
       try {
-        const aiPrompt = `Generate professional website content for a cleaning company following a premium agency template structure.
+        // Determine if residential, commercial, or hybrid
+        const residentialServices = ['Residential Cleaning', 'Airbnb Cleaning', 'Move-In / Move-Out Cleaning'];
+        const commercialServices = ['Commercial Cleaning', 'Office Cleaning', 'Medical Cleaning', 'Janitorial Services', 'Post-Construction Cleaning'];
 
-Company Info:
-- Name: ${formData.company_name}
-- Location: ${formData.city}, ${formData.state}
-- Services: ${formData.service_types.join(', ')}
-- Years in Business: ${formData.years_in_business || 'New'}
-${formData.existing_website_url ? `- Reference Website: ${formData.existing_website_url}` : ''}
+        const hasResidential = formData.service_types.some(s => residentialServices.includes(s));
+        const hasCommercial = formData.service_types.some(s => commercialServices.includes(s));
+        const isHybrid = hasResidential && hasCommercial;
 
-Generate content following this exact structure:
+        let tone = '';
+        if (isHybrid) {
+          tone = 'Use a dual-tone approach: warm and lifestyle-oriented for residential, professional and logic-driven for commercial';
+        } else if (hasResidential) {
+          tone = 'Use a warm, lifestyle-oriented tone focusing on "reclaiming time," "safety," and family';
+        } else {
+          tone = 'Use a professional, logic-driven tone focusing on "compliance," "operational efficiency," and "risk mitigation"';
+        }
+
+        const aiPrompt = `You are a Senior Conversion Rate Optimization (CRO) Expert and B2B SaaS Designer specialized in the cleaning industry.
+
+      Generate a high-performance website for ${formData.company_name} based in ${formData.city}, ${formData.state}.
+
+      COMPANY INFO:
+      - Name: ${formData.company_name}
+      - Location: ${formData.city}, ${formData.state}
+      - Services: ${formData.service_types.join(', ')}
+      - Years in Business: ${formData.years_in_business || 'New'}
+      - Insured: ${formData.insured ? 'Yes' : 'Not specified'}
+      - Google Rating: ${formData.google_rating || 'Not specified'}
+      ${formData.existing_website_url ? `- Reference Website: ${formData.existing_website_url}` : ''}
+
+      TONE: ${tone}
+
+      CRITICAL RULES:
+      1. Hero Section must use "Benefit-First" headline formula: [Desired Outcome] + [Timeframe] + [Objection Handle]
+      ${hasResidential ? '- Residential Example: "A Sparkling Home Every Week. Book in 60 Seconds. No Contracts."' : ''}
+      ${hasCommercial ? '- Commercial Example: "Reliable Facility Management in ' + formData.city + '. OSHA-Compliant & Fully Insured."' : ''}
+
+      2. Trust Bar must include: Google Rating, Insurance Status, Years in Business, Safety credentials
+
+      3. Service Descriptions must be benefit-driven, NOT feature lists:
+      - Airbnb: "5-star guest reviews guaranteed with 4-hour turnarounds"
+      - Medical: "Strict sanitization protocols meeting all ${formData.state} healthcare regulations"
+      - Floor Care: "Industrial-grade restoration to protect your facility's investment"
+      - Each service needs unique value proposition
+
+      4. FAQ must address 2026 buyer objections:
+      - "Are your cleaners background checked?" (Yes, 100% vetted)
+      - "What if I'm not satisfied?" (24-hour re-clean guarantee)
+      - "Do you provide your own supplies?" (Yes, EPA-approved and eco-friendly)
+
+      5. Inject ${formData.city} and ${formData.state} naturally throughout content
+
+      6. Social Proof phrasing:
+      ${hasResidential ? '- Residential: "Join 500+ happy families in ' + formData.city + '"' : ''}
+      ${hasCommercial ? '- Commercial: "The reliable partner for ' + formData.city + ' businesses"' : ''}
+
+      Generate content following this exact structure:
 
 hero: {
   headline: (48-64px size, benefit-driven, mentions location),

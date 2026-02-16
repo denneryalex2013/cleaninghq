@@ -29,24 +29,28 @@ export default function Generating() {
   }, []);
 
   useEffect(() => {
-    if (progress === 100 && recordId && !checkingStatus) {
-      setCheckingStatus(true);
-      
-      try {
-        await base44.entities.SiteRequest.update(recordId, { 
-          status: 'generated',
-          generated_content: {
-            generated_at: new Date().toISOString(),
-            version: '1.0'
-          }
-        });
+    const updateAndNavigate = async () => {
+      if (progress === 100 && recordId && !checkingStatus) {
+        setCheckingStatus(true);
         
-        navigate(createPageUrl('Preview') + `?id=${recordId}`);
-      } catch (error) {
-        console.error('Error updating status:', error);
-        navigate(createPageUrl('Preview') + `?id=${recordId}`);
+        try {
+          await base44.entities.SiteRequest.update(recordId, { 
+            status: 'generated',
+            generated_content: {
+              generated_at: new Date().toISOString(),
+              version: '1.0'
+            }
+          });
+          
+          navigate(createPageUrl('Preview') + `?id=${recordId}`);
+        } catch (error) {
+          console.error('Error updating status:', error);
+          navigate(createPageUrl('Preview') + `?id=${recordId}`);
+        }
       }
-    }
+    };
+    
+    updateAndNavigate();
   }, [progress, recordId, checkingStatus]);
 
   return (

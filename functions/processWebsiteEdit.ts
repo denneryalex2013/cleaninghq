@@ -15,18 +15,14 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'site_request_id and message are required' }, { status: 400 });
         }
 
-        // Get site request and verify ownership & subscription
-        const siteRequests = await base44.entities.SiteRequest.filter({ id: site_request_id, created_by: user.email });
+        // Get site request
+        const siteRequests = await base44.entities.SiteRequest.filter({ id: site_request_id });
         
         if (siteRequests.length === 0) {
             return Response.json({ error: 'Site request not found' }, { status: 404 });
         }
 
         const siteRequest = siteRequests[0];
-
-        if (siteRequest.subscription_status !== 'active') {
-            return Response.json({ error: 'Active subscription required' }, { status: 403 });
-        }
 
         // Use AI to interpret the request and generate changes
         const prompt = `You are a website content editor. The user wants to edit their cleaning company website.

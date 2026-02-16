@@ -281,6 +281,26 @@ export default function Dashboard() {
               </Card>
             )}
 
+            {siteRequest.subscription_status === 'active' && (
+              <Card className="border-2 border-green-600 bg-green-50">
+                <CardHeader>
+                  <CardTitle className="text-center text-green-900">✅ Subscription Active</CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6 text-center">
+                  <p className="text-sm text-green-800 mb-4">
+                    Your website is live and your subscription is active.
+                  </p>
+                  <Button 
+                    className="w-full bg-teal-600 hover:bg-teal-700"
+                    onClick={() => navigate(createPageUrl('Editor') + `?id=${recordId}`)}
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Edit Website
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Company Info Card */}
             <Card>
               <CardHeader>

@@ -14,30 +14,37 @@ export default function Auth() {
     const checkAuth = async () => {
       try {
         const user = await base44.auth.me();
+        console.log('🔐 Auth: User authenticated:', user?.email);
         if (user) {
           // Check if there's a site_request_id to link
           const urlParams = new URLSearchParams(window.location.search);
           const siteRequestId = urlParams.get('site_request_id');
           
+          console.log('🔗 Auth: site_request_id from URL:', siteRequestId);
+          
           if (siteRequestId) {
             // Link the site request to this user
             try {
+              console.log('📝 Auth: Linking site to user...');
               await base44.entities.SiteRequest.update(siteRequestId, {
                 user_id: user.id,
                 owner_email: user.email
               });
+              console.log('✅ Auth: Site linked successfully');
             } catch (err) {
-              console.error('Failed to link site:', err);
+              console.error('❌ Auth: Failed to link site:', err);
             }
             // Redirect to specific site dashboard after linking
+            console.log('→ Auth: Redirecting to Dashboard with site ID');
             navigate(createPageUrl('Dashboard') + `?id=${siteRequestId}`);
           } else {
             // No site request to link, go to general dashboard
+            console.log('→ Auth: No site ID, redirecting to general Dashboard');
             navigate(createPageUrl('Dashboard'));
           }
         }
       } catch (error) {
-        console.log('Not authenticated');
+        console.log('ℹ️ Auth: Not authenticated or error:', error?.message);
       } finally {
         setLoading(false);
       }

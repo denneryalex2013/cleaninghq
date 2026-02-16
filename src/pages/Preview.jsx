@@ -24,6 +24,7 @@ export default function Preview() {
 
   const urlParams = new URLSearchParams(window.location.search);
   const recordId = urlParams.get('id');
+  const pageParam = urlParams.get('page');
 
   useEffect(() => {
     const loadSiteRequest = async () => {
@@ -46,6 +47,13 @@ export default function Preview() {
 
     loadSiteRequest();
   }, [recordId]);
+
+  // Handle ?page= query parameter routing
+  useEffect(() => {
+    if (pageParam && location.pathname === '/Preview') {
+      navigate(`/Preview/${pageParam}`, { replace: true });
+    }
+  }, [pageParam, location.pathname, navigate]);
 
   if (loading) {
     return (

@@ -319,16 +319,34 @@ export default function Dashboard() {
                   <span className="text-gray-600">Phone:</span>
                   <p className="font-semibold">{siteRequest.phone}</p>
                 </div>
-                {siteRequest.services && siteRequest.services.length > 0 && (
+                {(siteRequest.service_types || siteRequest.services) && (siteRequest.service_types || siteRequest.services).length > 0 && (
                   <div>
                     <span className="text-gray-600">Services:</span>
                     <div className="flex flex-wrap gap-1 mt-1">
-                      {siteRequest.services.map((service, idx) => (
+                      {(siteRequest.service_types || siteRequest.services).map((service, idx) => (
                         <Badge key={idx} variant="secondary" className="text-xs">
                           {service}
                         </Badge>
                       ))}
                     </div>
+                  </div>
+                )}
+                {siteRequest.company_name && (
+                  <div>
+                    <span className="text-gray-600">Company Name:</span>
+                    <p className="font-semibold">{siteRequest.company_name}</p>
+                  </div>
+                )}
+                {siteRequest.years_in_business && (
+                  <div>
+                    <span className="text-gray-600">Years in Business:</span>
+                    <p className="font-semibold">{siteRequest.years_in_business}</p>
+                  </div>
+                )}
+                {siteRequest.google_rating && (
+                  <div>
+                    <span className="text-gray-600">Google Rating:</span>
+                    <p className="font-semibold">⭐ {siteRequest.google_rating}/5</p>
                   </div>
                 )}
               </CardContent>

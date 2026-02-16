@@ -17,10 +17,9 @@ export default function Success() {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
     } else if (siteRequestId) {
-          // Redirect to Auth with siteRequestId so it can be linked after signup
-          navigate(createPageUrl('Auth') + `?site_request_id=${siteRequestId}`);
+          // Go straight to dashboard
+          navigate(createPageUrl('Dashboard') + `?id=${siteRequestId}`);
       } else {
-          // No site request, go to home
           navigate(createPageUrl('Home'));
       }
   }, [countdown, navigate, siteRequestId]);
@@ -66,7 +65,7 @@ export default function Success() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button
                 className="bg-teal-600 hover:bg-teal-700"
-                onClick={() => navigate(createPageUrl('Auth'))}
+                onClick={() => navigate(createPageUrl('Dashboard') + (siteRequestId ? `?id=${siteRequestId}` : ''))}
               >
                 Access Portal
               </Button>

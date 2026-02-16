@@ -3,117 +3,138 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
-        const user = await base44.auth.me();
+        const { siteRequestId, editRequest } = await req.json();
 
-        if (!user) {
-            return Response.json({ error: 'Unauthorized' }, { status: 401 });
+        if (!siteRequestId || !editRequest) {
+            return Response.json({ error: 'siteRequestId and editRequest required' }, { status: 400 });
         }
 
-        const { site_request_id, message, file_url } = await req.json();
-
-        if (!site_request_id || !message) {
-            return Response.json({ error: 'site_request_id and message are required' }, { status: 400 });
+        // Load site request
+        const sites = await base44.asServiceRole.entities.SiteRequest.filter({ id: siteRequestId });
+        if (sites.length === 0) {
+            return Response.json({ error: 'Site not found' }, { status: 404 });
         }
+        const site = sites[0];
 
-        // Get site request
-        const siteRequests = await base44.entities.SiteRequest.filter({ id: site_request_id });
-        
-        if (siteRequests.length === 0) {
-            return Response.json({ error: 'Site request not found' }, { status: 404 });
-        }
+        // Parse edit request with AI
+        const editPlan = await parseEditWithAI(base44, editRequest, site);
 
-        const siteRequest = siteRequests[0];
+        // Apply the edit to generated_content
+        const updatedContent = applyEdit(site.generated_content, editPlan, site);
 
-        // Use AI to interpret the request and generate changes
-        const prompt = `You are a website content editor. The user wants to edit their cleaning company website.
-
-Current website data:
-${JSON.stringify(siteRequest, null, 2)}
-
-User request: "${message}"
-${file_url ? `User uploaded file: ${file_url}` : ''}
-
-Parse this request and return a JSON object with:
-1. "edit_type": one of ["text", "image", "layout", "color", "service", "general"]
-2. "changes": an object with the specific fields to update in the site request
-3. "response": a friendly confirmation message to show the user
-
-Example responses:
-- If user says "change headline to X" → {"edit_type": "text", "changes": {"headline": "X"}, "response": "I've updated your headline to 'X'"}
-- If user says "change primary color to blue" → {"edit_type": "color", "changes": {"primary_color": "#3B82F6"}, "response": "I've changed your primary color to blue"}
-- If user uploads logo → {"edit_type": "image", "changes": {"logo": "url"}, "response": "I've updated your logo"}
-- If user says "add office cleaning to services" → {"edit_type": "service", "changes": {"services": ["existing", "Office Cleaning"]}, "response": "I've added Office Cleaning to your services"}
-
-Only return valid JSON, no other text.`;
-
-        const aiResponse = await base44.integrations.Core.InvokeLLM({
-            prompt: prompt,
-            response_json_schema: {
-                type: "object",
-                properties: {
-                    edit_type: { type: "string" },
-                    changes: { type: "object" },
-                    response: { type: "string" }
-                }
-            }
-        });
-
-        // Apply the changes
-        const updatedGeneratedContent = {
-            ...siteRequest.generated_content,
-            ...aiResponse.changes,
-            last_edited: new Date().toISOString()
-        };
-
-        // Update site request with new data
-        const updateData = { generated_content: updatedGeneratedContent };
-        
-        // Handle direct field updates
-        if (aiResponse.changes.company_name) updateData.company_name = aiResponse.changes.company_name;
-        if (aiResponse.changes.email) updateData.email = aiResponse.changes.email;
-        if (aiResponse.changes.phone) updateData.phone = aiResponse.changes.phone;
-        if (aiResponse.changes.city) updateData.city = aiResponse.changes.city;
-        if (aiResponse.changes.state) updateData.state = aiResponse.changes.state;
-        if (aiResponse.changes.primary_color) updateData.primary_color = aiResponse.changes.primary_color;
-        if (aiResponse.changes.secondary_color) updateData.secondary_color = aiResponse.changes.secondary_color;
-        if (aiResponse.changes.tertiary_color) updateData.tertiary_color = aiResponse.changes.tertiary_color;
-        if (aiResponse.changes.service_types) updateData.service_types = aiResponse.changes.service_types;
-        if (aiResponse.changes.services) updateData.services = aiResponse.changes.services;
-        if (aiResponse.changes.logo) updateData.logo = aiResponse.changes.logo;
-        if (aiResponse.changes.style) updateData.style = aiResponse.changes.style;
-
-        await base44.entities.SiteRequest.update(site_request_id, updateData);
-
-        // Save the edit record
-        await base44.entities.WebsiteEdit.create({
-            user_id: user.id,
-            site_request_id: site_request_id,
-            message: message,
-            role: 'user',
-            status: 'completed',
-            edit_type: aiResponse.edit_type,
-            applied_changes: aiResponse.changes
-        });
-
-        await base44.entities.WebsiteEdit.create({
-            user_id: user.id,
-            site_request_id: site_request_id,
-            message: aiResponse.response,
-            role: 'assistant',
-            status: 'completed',
-            edit_type: aiResponse.edit_type,
-            applied_changes: aiResponse.changes
+        // Save updated content
+        await base44.asServiceRole.entities.SiteRequest.update(siteRequestId, {
+            generated_content: updatedContent
         });
 
         return Response.json({
             success: true,
-            response: aiResponse.response,
-            changes: aiResponse.changes,
-            edit_type: aiResponse.edit_type
+            updatedContent: updatedContent
         });
 
     } catch (error) {
-        console.error('Website edit error:', error);
+        console.error('Edit error:', error);
         return Response.json({ error: error.message }, { status: 500 });
     }
 });
+
+async function parseEditWithAI(base44, editRequest, site) {
+    const prompt = `Parse this website edit request and extract the action.
+
+Request: "${editRequest}"
+Available services: ${site.service_types?.join(', ') || 'None'}
+
+Return JSON with:
+{
+  "action": "add_service" | "change_text" | "change_color" | "other",
+  "serviceName": "service name if adding service",
+  "fieldName": "field name if changing text",
+  "newValue": "new value",
+  "confidence": 0-1
+}
+
+Only return valid JSON, nothing else.`;
+
+    const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
+        prompt,
+        response_json_schema: {
+            type: "object",
+            properties: {
+                action: { type: "string" },
+                serviceName: { type: "string" },
+                fieldName: { type: "string" },
+                newValue: { type: "string" },
+                confidence: { type: "number" }
+            }
+        }
+    });
+
+    return result;
+}
+
+function applyEdit(generatedContent, editPlan, site) {
+    const content = JSON.parse(JSON.stringify(generatedContent)); // Deep copy
+
+    if (editPlan.action === 'add_service' && editPlan.serviceName) {
+        const citySlug = site.city.toLowerCase().replace(/\s+/g, '-');
+        const serviceSlug = editPlan.serviceName.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '');
+
+        const newService = {
+            slug: `${serviceSlug}-${citySlug}`,
+            service_name: editPlan.serviceName,
+            seo: {
+                title: `${editPlan.serviceName} in ${site.city} | ${site.company_name}`,
+                description: `Professional ${editPlan.serviceName.toLowerCase()} in ${site.city}`,
+                keywords: [editPlan.serviceName.toLowerCase(), site.city.toLowerCase(), "cleaning"]
+            },
+            hero: {
+                h1: `Professional ${editPlan.serviceName} in ${site.city}, ${site.state}`,
+                subheadline: `Trusted ${editPlan.serviceName.toLowerCase()} services`,
+                cta_text: "Get Free Quote"
+            },
+            intro: {
+                headline: `About Our ${editPlan.serviceName}`,
+                text: `We provide professional ${editPlan.serviceName.toLowerCase()} services tailored to meet your specific needs in ${site.city}, ${site.state}.`
+            },
+            benefits: [
+                { title: "Expert Team", description: "Trained and certified professionals" },
+                { title: "Quality Assurance", description: "Guaranteed satisfaction on every job" },
+                { title: "Fast & Reliable", description: "On-time service, every time" }
+            ],
+            why_choose: [
+                { title: "Experience", description: "Years of industry expertise" },
+                { title: "Affordable", description: "Competitive pricing without compromises" },
+                { title: "Licensed & Insured", description: "Full coverage and protection" }
+            ],
+            process: {
+                headline: "Our Process",
+                steps: [
+                    { title: "Assessment", description: "We evaluate your specific needs" },
+                    { title: "Custom Plan", description: "We create a tailored solution" },
+                    { title: "Execution", description: "Professional service delivery" }
+                ]
+            },
+            cta: {
+                headline: "Ready to Get Started?",
+                text: "Contact us for a free quote"
+            }
+        };
+
+        if (!content.pages) content.pages = {};
+        if (!content.pages.services) content.pages.services = [];
+        content.pages.services.push(newService);
+
+    } else if (editPlan.action === 'change_text' && editPlan.fieldName && editPlan.newValue) {
+        // Simple text replacement in homepage
+        if (editPlan.fieldName === 'headline' && content.pages?.homepage?.hero) {
+            content.pages.homepage.hero.headline = editPlan.newValue;
+        } else if (editPlan.fieldName === 'subheadline' && content.pages?.homepage?.hero) {
+            content.pages.homepage.hero.subheadline = editPlan.newValue;
+        }
+    } else if (editPlan.action === 'change_color') {
+        if (!content.brand) content.brand = {};
+        content.brand.primary_color = editPlan.newValue;
+    }
+
+    return content;
+}

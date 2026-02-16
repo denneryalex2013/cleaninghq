@@ -15,7 +15,33 @@ const colorOptions = [
   { name: 'Indigo', value: '#6366f1' }
 ];
 
-const styles = ['Modern', 'Corporate', 'Luxury', 'Bold', 'Minimal'];
+const styleOptions = [
+  { 
+    value: 'Modern', 
+    description: 'Clean, contemporary design with smooth animations',
+    image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&q=80'
+  },
+  { 
+    value: 'Corporate', 
+    description: 'Professional and trustworthy appearance',
+    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=80'
+  },
+  { 
+    value: 'Luxury', 
+    description: 'Premium feel with elegant typography',
+    image: 'https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=400&q=80'
+  },
+  { 
+    value: 'Bold', 
+    description: 'Eye-catching with vibrant elements',
+    image: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=400&q=80'
+  },
+  { 
+    value: 'Minimal', 
+    description: 'Simple and focused on content',
+    image: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=400&q=80'
+  }
+];
 
 export default function Step4Branding({ formData, setFormData, onNext, onBack }) {
   const handleSubmit = (e) => {
@@ -178,30 +204,41 @@ export default function Step4Branding({ formData, setFormData, onNext, onBack })
 
         {/* Style */}
         <div>
-          <Label htmlFor="style" className="text-base font-semibold text-gray-900">
+          <Label className="text-base font-semibold text-gray-900 mb-3 block">
             Website Style *
           </Label>
-          <Select
-            value={formData.style}
-            onValueChange={(value) => setFormData({ ...formData, style: value })}
-          >
-            <SelectTrigger className="mt-1.5 h-12 text-base">
-              <SelectValue placeholder="Select a style" />
-            </SelectTrigger>
-            <SelectContent>
-              {styles.map((style) => (
-                <SelectItem key={style} value={style} className="text-base">
-                  {style}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <div className="mt-3 space-y-2 text-xs text-gray-600">
-            <p><strong>Modern:</strong> Clean, contemporary design with smooth animations</p>
-            <p><strong>Corporate:</strong> Professional and trustworthy appearance</p>
-            <p><strong>Luxury:</strong> Premium feel with elegant typography</p>
-            <p><strong>Bold:</strong> Eye-catching with vibrant elements</p>
-            <p><strong>Minimal:</strong> Simple and focused on content</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {styleOptions.map((style) => (
+              <button
+                key={style.value}
+                type="button"
+                onClick={() => setFormData({ ...formData, style: style.value })}
+                className={`rounded-xl border-2 text-left transition-all hover:shadow-lg overflow-hidden ${
+                  formData.style === style.value
+                    ? 'border-teal-600 bg-teal-50'
+                    : 'border-gray-200 hover:border-teal-300'
+                }`}
+              >
+                <div className="relative h-32 overflow-hidden">
+                  <img 
+                    src={style.image} 
+                    alt={style.value}
+                    className="w-full h-full object-cover"
+                  />
+                  {formData.style === style.value && (
+                    <div className="absolute top-2 right-2 bg-teal-600 text-white rounded-full p-1">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                <div className="p-4">
+                  <div className="font-bold text-lg text-gray-900 mb-1">{style.value}</div>
+                  <div className="text-sm text-gray-600">{style.description}</div>
+                </div>
+              </button>
+            ))}
           </div>
         </div>
       </div>

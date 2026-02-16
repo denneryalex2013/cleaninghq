@@ -18,11 +18,7 @@ export default function Success() {
       return () => clearTimeout(timer);
     } else {
       // Redirect to editor/dashboard
-      if (businessId) {
-        navigate(createPageUrl('Editor') + `?id=${businessId}`);
-      } else {
-        navigate(createPageUrl('Home'));
-      }
+      navigate(createPageUrl('CustomerDashboard'));
     }
   }, [countdown, navigate, businessId]);
 

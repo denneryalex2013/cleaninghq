@@ -109,6 +109,34 @@ export default function Start() {
       IMPORTANT: Integrate these industry-specific pain points and solutions naturally throughout ALL content - headlines, descriptions, benefits, and testimonials.
       ` : '';
 
+        // Image handling logic
+        const hasUserImages = formData.logo_url || formData.hero_image_url || (formData.gallery_images && formData.gallery_images.length > 0);
+        const hasGoogleBusiness = formData.google_business_url;
+        
+        const imageInstructions = `
+IMAGE SOURCING PRIORITY:
+${hasUserImages ? '1. PRIORITY: Use user-uploaded images provided in the data' : ''}
+${hasGoogleBusiness ? '2. Extract high-quality images from Google Business Profile' : ''}
+${!hasUserImages ? '3. Generate or suggest high-resolution, professional stock images relevant to:' : '4. Supplement with professional stock images for:'}
+   - ${formData.service_types.join(', ')}
+   ${formData.industries_served?.length > 0 ? `- ${formData.industries_served.join(', ')} industry settings` : ''}
+   - ${formData.city}, ${formData.state} location context
+
+IMAGE REQUIREMENTS:
+- All images must be HD quality (min 1920x1080)
+- Show real cleaning professionals in action
+- Industry-specific settings (${formData.industries_served?.join(', ') || 'general commercial/residential'})
+- Diverse representation
+- Professional equipment and attire
+- Before/after shots where applicable
+
+For each image, provide descriptive alt text that includes:
+- Service type
+- Location (${formData.city})
+- Industry context if applicable
+- Action being performed
+`;
+
         const aiPrompt = `You are a Senior Conversion Rate Optimization (CRO) Expert and B2B SaaS Designer specialized in the cleaning industry.
 
         Generate a high-performance website for ${formData.company_name} based in ${formData.city}, ${formData.state}.
@@ -124,6 +152,7 @@ export default function Start() {
 
         TONE: ${tone}
         ${industryContext}
+        ${imageInstructions}
 
 CRITICAL RULES:
 1. Hero Section must use "Benefit-First" headline formula: [Desired Outcome] + [Timeframe] + [Objection Handle]
@@ -177,13 +206,48 @@ about: {
   image_alt: "Alt text for about section image"
 }
 
+overall_business_benefits: [
+  {title: "Overall benefit 1", description: "Core value proposition", icon_alt: "Icon description"}
+] (3-5 company-wide benefits that apply across all services)
+
+service_specific_benefits: {
+  [service_name]: [
+    {title: "Benefit title", description: "Service-specific benefit with industry focus", icon_alt: "Icon description"}
+  ] (3-5 benefits per service)
+}
+
 benefits: [
   {title: "Benefit title", description: "Benefit description with industry focus", icon_alt: "Icon description"}
-] (6 benefits)
+] (6 benefits for homepage - can mix overall and service-specific)
+
+why_choose_us: [
+  {
+    title: "Key Differentiator 1",
+    description: "Detailed explanation of what sets you apart",
+    industry_relevance: "How this applies to ${formData.industries_served?.join(', ') || 'target industries'}"
+  },
+  {
+    title: "Key Differentiator 2",
+    description: "Unique competitive advantage",
+    industry_relevance: "Industry-specific application"
+  },
+  {
+    title: "Key Differentiator 3",
+    description: "Core strength or credential",
+    industry_relevance: "Why this matters to ${formData.industries_served?.join(', ') || 'your clients'}"
+  }
+] (3 key differentiators tailored to selected industries)
 
 testimonials: [
-  {name: "Customer name", text: "Testimonial quote mentioning specific industry results", rating: 5, industry: "Industry type if applicable"}
-] (3 testimonials)
+  {
+    name: "Realistic customer name",
+    business: "Business name (optional)",
+    industry: "${formData.industries_served?.[0] || 'General'}",
+    text: "Detailed testimonial quote (2-3 sentences) mentioning specific results, service quality, and industry-relevant outcomes",
+    rating: 5,
+    service_used: "${formData.service_types[0]}"
+  }
+] (3-5 unique, realistic testimonials based on company's services and industries served)
 
 cta: {
   headline: "Action headline",
@@ -208,11 +272,21 @@ pages: {
     subheadline: "Compelling subheadline addressing industry concerns",
     description_title: "About This Service",
     description: "4-5 sentences, benefit-driven, mentions ${formData.city}, ${formData.state}, and industry-specific solutions",
-    benefits: ["Industry-specific benefit 1", "Industry-specific benefit 2", "Industry-specific benefit 3", "Industry-specific benefit 4"],
+    benefits: [
+      {title: "Benefit 1", description: "Industry-specific benefit detail", icon_alt: "Icon description"},
+      {title: "Benefit 2", description: "Industry-specific benefit detail", icon_alt: "Icon description"},
+      {title: "Benefit 3", description: "Industry-specific benefit detail", icon_alt: "Icon description"},
+      {title: "Benefit 4", description: "Industry-specific benefit detail", icon_alt: "Icon description"},
+      {title: "Benefit 5", description: "Industry-specific benefit detail", icon_alt: "Icon description"}
+    ] (3-5 unique benefits for THIS specific service),
     why_choose_us: [
       {title: "Reason 1 (industry-focused)", desc: "Detail with credentials"},
       {title: "Reason 2 (industry-focused)", desc: "Detail with compliance"},
       {title: "Reason 3 (industry-focused)", desc: "Detail with results"}
+    ],
+    service_images: [
+      {url: "Suggest HD image URL or description", alt: "Detailed alt text"},
+      {url: "Suggest HD image URL or description", alt: "Detailed alt text"}
     ],
     hero_image_alt: "Alt text: Professional ${service.toLowerCase()} service in ${formData.city}",
     section_image_alts: ["Alt text 1", "Alt text 2", "Alt text 3"]
@@ -228,15 +302,19 @@ ${formData.existing_website_url ? 'Use the reference website for content inspira
 
         const aiContent = await base44.integrations.Core.InvokeLLM({
           prompt: aiPrompt,
-          add_context_from_internet: formData.existing_website_url ? true : false,
+          add_context_from_internet: formData.existing_website_url || formData.google_business_url ? true : false,
           response_json_schema: {
             type: "object",
             properties: {
+              seo: { type: "object" },
               hero: { type: "object" },
               trust_bar: { type: "array" },
               services: { type: "object" },
               about: { type: "object" },
+              overall_business_benefits: { type: "array" },
+              service_specific_benefits: { type: "object" },
               benefits: { type: "array" },
+              why_choose_us: { type: "array" },
               testimonials: { type: "array" },
               cta: { type: "object" },
               footer: { type: "object" },

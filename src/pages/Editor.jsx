@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Send, Upload, Loader2, ArrowLeft, ExternalLink, Sparkles } from 'lucide-react';
+import { Send, Upload, Loader2, ArrowLeft, ExternalLink, Sparkles, AlertCircle } from 'lucide-react';
 import { createPageUrl } from '../utils';
 import ChatMessage from '../components/editor/ChatMessage';
 
@@ -17,6 +17,7 @@ export default function Editor() {
   const [sending, setSending] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [previewKey, setPreviewKey] = useState(0);
+  const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -90,7 +91,8 @@ export default function Editor() {
 
     } catch (error) {
       console.error('Error sending message:', error);
-      alert('Failed to process edit. Please try again.');
+      const errorMsg = error.response?.data?.error || error.message || 'Unknown error';
+      setError(`Failed to process edit: ${errorMsg}. Please try again or contact support.`);
     } finally {
       setSending(false);
     }
@@ -149,12 +151,19 @@ export default function Editor() {
 
   if (!siteRequest) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="text-center">
-          <p className="text-gray-600 mb-4">Website not found</p>
-          <Button onClick={() => navigate(createPageUrl('Dashboard'))}>
-            Go to Dashboard
-          </Button>
+          <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Website Not Found</h1>
+          <p className="text-gray-600 mb-6">The website you're trying to edit doesn't exist or has been deleted.</p>
+          <div className="flex gap-3 justify-center">
+            <Button onClick={() => navigate(createPageUrl('Dashboard'))} className="bg-teal-600 hover:bg-teal-700">
+              Go to Dashboard
+            </Button>
+            <Button variant="outline" onClick={() => navigate(createPageUrl('Home'))}>
+              Go Home
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -162,6 +171,22 @@ export default function Editor() {
 
   return (
     <div className="h-screen bg-gray-50 flex flex-col">
+      {/* Error Banner */}
+      {error && (
+        <div className="bg-red-50 border-b border-red-200 px-6 py-3 flex items-center gap-3">
+          <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+          <div className="flex-1">
+            <p className="text-sm text-red-800">{error}</p>
+          </div>
+          <button
+            onClick={() => setError(null)}
+            className="text-red-600 hover:text-red-700 font-semibold text-sm"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="max-w-[1800px] mx-auto flex items-center justify-between">

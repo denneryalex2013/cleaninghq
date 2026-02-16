@@ -86,11 +86,13 @@ export default function Dashboard() {
   const handleActivate = async () => {
     setCheckoutLoading(true);
     try {
+      console.log('💳 Dashboard: Activating checkout', { id: siteRequest.id, email: siteRequest.email });
       const response = await base44.functions.invoke('createStripeCheckout', {
         businessId: siteRequest.id,
         siteRequestId: siteRequest.id,
         email: siteRequest.email
       });
+      console.log('💳 Dashboard: Checkout URL:', response.data.url);
       
       if (response.data.url) {
         window.location.href = response.data.url;

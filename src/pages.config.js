@@ -53,6 +53,7 @@ import Generating from './pages/Generating';
 import Home from './pages/Home';
 import Preview from './pages/Preview';
 import Start from './pages/Start';
+import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
@@ -67,4 +68,5 @@ export const PAGES = {
 export const pagesConfig = {
     mainPage: "Home",
     Pages: PAGES,
+    Layout: __Layout,
 };

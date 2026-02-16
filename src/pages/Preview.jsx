@@ -131,6 +131,10 @@ export default function Preview() {
     return `${serviceSlug}-${citySlug}`;
   };
 
+  // Check if new multi-page structure exists
+  const servicePages = content.pages?.services || [];
+  const hasNewStructure = servicePages.length > 0;
+
   const HomePage = () => (
     <>
       <Hero {...heroProps} />
@@ -178,7 +182,36 @@ export default function Preview() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         
-        {siteRequest.service_types?.map((service) => {
+        {/* New structure: service pages with slugs */}
+        {hasNewStructure && servicePages.map((servicePage) => {
+          const slug = servicePage.slug?.startsWith('/') ? servicePage.slug.slice(1) : servicePage.slug;
+          
+          return (
+            <Route 
+              key={servicePage.slug}
+              path={`/${slug}`} 
+              element={
+                <ServicePage
+                  service={servicePage.seo?.title || servicePage.hero?.headline || 'Service'}
+                  content={servicePage}
+                  primaryColor={primaryColor}
+                  secondaryColor={secondaryColor}
+                  tertiaryColor={tertiaryColor}
+                  city={siteRequest.city}
+                  state={siteRequest.state}
+                  companyName={siteRequest.company_name}
+                  heroImage={servicePage.hero?.image || siteRequest.hero_image_url || siteRequest.gallery_images?.[0]}
+                  testimonials={content.testimonials}
+                  reviewsVerified={siteRequest.reviews_verified}
+                  googleReviews={siteRequest.google_reviews}
+                />
+              } 
+            />
+          );
+        })}
+
+        {/* Legacy structure: generate routes from service_types */}
+        {!hasNewStructure && siteRequest.service_types?.map((service) => {
           const route = getServiceRoute(service);
           const contentKey = service.toLowerCase().replace(/\s+/g, '_').replace(/\//g, '');
           

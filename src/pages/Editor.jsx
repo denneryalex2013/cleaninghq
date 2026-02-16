@@ -332,7 +332,6 @@ export default function Editor() {
           </Card>
         </div>
       </div>
-      </div>
     </div>
   );
 }

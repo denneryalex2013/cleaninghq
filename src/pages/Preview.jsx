@@ -85,10 +85,14 @@ export default function Preview() {
   const content = siteRequest.generated_content || {};
   const pages = content.pages || {};
 
+  // Check service pages structure FIRST
+  const servicePages = content.pages?.services || [];
+  const hasNewStructure = servicePages.length > 0;
+
   // Prepare component props
   const heroProps = {
-    headline: content.hero?.headline || `Professional ${siteRequest.service_types?.[0] || 'Cleaning'} Services in ${siteRequest.city}`,
-    subheadline: content.hero?.subheadline || `Trusted by homeowners and businesses across ${siteRequest.city}, ${siteRequest.state}`,
+    headline: pages.homepage?.hero?.headline || content.hero?.headline || `Professional ${siteRequest.service_types?.[0] || 'Cleaning'} Services in ${siteRequest.city}`,
+    subheadline: pages.homepage?.hero?.subheadline || content.hero?.subheadline || `Trusted by homeowners and businesses across ${siteRequest.city}, ${siteRequest.state}`,
     phone: siteRequest.phone,
     primaryColor,
     insured: siteRequest.insured,

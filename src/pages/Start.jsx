@@ -62,10 +62,9 @@ export default function Start() {
     try {
       const previewUrl = generatePreviewUrl(formData.company_name);
       
-      // Generate enhanced content with AI
       let generatedContent = {
         generated_at: new Date().toISOString(),
-        version: '2.0',
+        version: '3.0',
         brand: {
           primary_color: formData.primary_color,
           secondary_color: formData.secondary_color || null,
@@ -74,231 +73,153 @@ export default function Start() {
       };
 
       try {
-        // Determine if residential, commercial, or hybrid
         const residentialServices = ['Residential Cleaning', 'Airbnb Cleaning', 'Move-In / Move-Out Cleaning'];
         const commercialServices = ['Commercial Cleaning', 'Office Cleaning', 'Medical Cleaning', 'Janitorial Services', 'Post-Construction Cleaning'];
 
         const hasResidential = formData.service_types.some(s => residentialServices.includes(s));
         const hasCommercial = formData.service_types.some(s => commercialServices.includes(s));
-        const isHybrid = hasResidential && hasCommercial;
 
         let tone = '';
-        if (isHybrid) {
-          tone = 'Use a dual-tone approach: warm and lifestyle-oriented for residential, professional and logic-driven for commercial';
+        if (hasResidential && hasCommercial) {
+          tone = 'Dual-tone: warm and lifestyle-oriented for residential sections, professional and logic-driven for commercial sections.';
         } else if (hasResidential) {
-          tone = 'Use a warm, lifestyle-oriented tone focusing on "reclaiming time," "safety," and family';
+          tone = 'Warm, lifestyle-oriented. Focus on "reclaiming time," family safety, and peace of mind.';
         } else {
-          tone = 'Use a professional, logic-driven tone focusing on "compliance," "operational efficiency," and "risk mitigation"';
+          tone = 'Professional, logic-driven. Focus on compliance, operational efficiency, and risk mitigation.';
         }
 
-        // Industry-specific messaging
-        const industryContext = formData.industries_served?.length > 0 ? `
-      INDUSTRIES SERVED: ${formData.industries_served.join(', ')}
+        const industryContext = formData.industries_served?.length > 0 
+          ? `Industries served: ${formData.industries_served.join(', ')}. Integrate industry-specific pain points naturally throughout all content.`
+          : '';
 
-      INDUSTRY-SPECIFIC REQUIREMENTS:
-      ${formData.industries_served.includes('Medical & Healthcare') ? '- Medical: Emphasize infection control, hospital-grade disinfectants, HIPAA/OSHA compliance, bloodborne pathogen protocols' : ''}
-      ${formData.industries_served.includes('Industrial & Manufacturing') ? '- Industrial: Highlight heavy machinery safety, degreasing, pressure washing, hazardous waste handling' : ''}
-      ${formData.industries_served.includes('Legal & Professional Offices') ? '- Legal: Focus on confidentiality, professional image, background-checked staff for data security' : ''}
-      ${formData.industries_served.includes('Food Service & Hospitality') ? '- Food Service: Stress sanitation, pest prevention, grease trap cleaning, FDA/Health Dept. standards' : ''}
-      ${formData.industries_served.includes('Retail & Showroom') ? '- Retail: Emphasize aesthetics, high foot traffic handling, floor buffing, window polishing, brand image maintenance' : ''}
-      ${formData.industries_served.includes('Educational (Schools/Daycare)') ? '- Educational: Focus on germ reduction, non-toxic "green" cleaners safe for children, high-touch surface sanitization' : ''}
-      ${formData.industries_served.includes('Data Centers & IT') ? '- Data Centers: Highlight dust-free environments, anti-static cleaning, HEPA vacuuming, delicate hardware care' : ''}
-      ${formData.industries_served.includes('Post-Construction (Commercial)') ? '- Post-Construction: Emphasize debris removal, safety, drywall dust clearing, paint overspray cleanup' : ''}
-      ${formData.industries_served.includes('Gym & Fitness') ? '- Gym: Focus on odor control, sweat removal, equipment sanitization, fungi and staph infection prevention' : ''}
+        const citySlug = formData.city.toLowerCase().replace(/\s+/g, '-');
 
-      IMPORTANT: Integrate these industry-specific pain points and solutions naturally throughout ALL content - headlines, descriptions, benefits, and testimonials.
-      ` : '';
+        const serviceList = formData.service_types.map(s => {
+          const slug = s.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '') + '-' + citySlug;
+          return `{ name: "${s}", slug: "${slug}" }`;
+        }).join(', ');
 
-        // Image handling logic
-        const hasUserImages = formData.logo_url || formData.hero_image_url || (formData.gallery_images && formData.gallery_images.length > 0);
-        const hasGoogleBusiness = formData.google_business_url;
-        
-        const imageInstructions = `
-IMAGE SOURCING PRIORITY:
-${hasUserImages ? '1. PRIORITY: Use user-uploaded images provided in the data' : ''}
-${hasGoogleBusiness ? '2. Extract high-quality images from Google Business Profile' : ''}
-${!hasUserImages ? '3. Generate or suggest high-resolution, professional stock images relevant to:' : '4. Supplement with professional stock images for:'}
-   - ${formData.service_types.join(', ')}
-   ${formData.industries_served?.length > 0 ? `- ${formData.industries_served.join(', ')} industry settings` : ''}
-   - ${formData.city}, ${formData.state} location context
+        const aiPrompt = `You are an elite website copywriter and CRO expert for the cleaning industry. Generate ALL website content for ${formData.company_name} in ${formData.city}, ${formData.state}.
 
-IMAGE REQUIREMENTS:
-- All images must be HD quality (min 1920x1080)
-- Show real cleaning professionals in action
-- Industry-specific settings (${formData.industries_served?.join(', ') || 'general commercial/residential'})
-- Diverse representation
-- Professional equipment and attire
-- Before/after shots where applicable
+COMPANY DATA:
+- Name: ${formData.company_name}
+- City: ${formData.city}, State: ${formData.state}
+- Services: ${formData.service_types.join(', ')}
+- Years in Business: ${formData.years_in_business || 'New'}
+- Insured: ${formData.insured ? 'Yes' : 'Not specified'}
+- Google Rating: ${formData.google_rating || 'Not specified'}
+- Industries: ${formData.industries_served?.join(', ') || 'General'}
+${formData.existing_website_url ? `- Reference site: ${formData.existing_website_url}` : ''}
 
-For each image, provide descriptive alt text that includes:
-- Service type
-- Location (${formData.city})
-- Industry context if applicable
-- Action being performed
-`;
+TONE: ${tone}
+${industryContext}
 
-        const aiPrompt = `You are a Senior Conversion Rate Optimization (CRO) Expert and B2B SaaS Designer specialized in the cleaning industry.
+SERVICE SLUGS (use these exact values):
+${formData.service_types.map(s => {
+  const slug = s.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '') + '-' + citySlug;
+  return `- "${s}" → slug: "${slug}"`;
+}).join('\n')}
 
-        Generate a high-performance website for ${formData.company_name} based in ${formData.city}, ${formData.state}.
+=== CONTENT RULES ===
 
-        COMPANY INFO:
-        - Name: ${formData.company_name}
-        - Location: ${formData.city}, ${formData.state}
-        - Services: ${formData.service_types.join(', ')}
-        - Years in Business: ${formData.years_in_business || 'New'}
-        - Insured: ${formData.insured ? 'Yes' : 'Not specified'}
-        - Google Rating: ${formData.google_rating || 'Not specified'}
-        ${formData.existing_website_url ? `- Reference Website: ${formData.existing_website_url}` : ''}
+1. HERO: Write a benefit-driven headline (what the customer GETS, not what you do).
+   - Format: [Desired Outcome] + [Location] + [Objection Handle]
+   - Example: "Spotless Spaces, Zero Hassle. Serving ${formData.city} Businesses Since ${formData.years_in_business > 0 ? (new Date().getFullYear() - formData.years_in_business) : '2024'}."
+   - Subheadline: 1 sentence that builds trust and mentions coverage area.
 
-        TONE: ${tone}
-        ${industryContext}
-        ${imageInstructions}
+2. SERVICES: Each service needs a unique 2-sentence description that sells the BENEFIT.
+   - Bad: "We offer commercial cleaning services"
+   - Good: "Walk into a workspace that energizes your team every morning. We handle everything from daily maintenance to deep sanitization so you can focus on growing your business."
 
-CRITICAL RULES:
-1. Hero Section must use "Benefit-First" headline formula: [Desired Outcome] + [Timeframe] + [Objection Handle]
-${hasResidential ? `- Residential Example: "A Sparkling Home Every Week. Book in 60 Seconds. No Contracts."` : ''}
-${hasCommercial ? `- Commercial Example: "Reliable Facility Management in ${formData.city}. OSHA-Compliant & Fully Insured."` : ''}
+3. ABOUT: Write 3-4 sentences establishing authority. Mention ${formData.city}, years of experience, and what makes the company different. Do NOT be generic.
 
-2. Trust Bar must include: Google Rating, Insurance Status, Years in Business, Safety credentials
+4. BENEFITS: 6 items for the homepage. Each needs a title, description (1-2 sentences), and an icon name from this list: shield, clock, star, users, leaf, thumbsup, award, check, badge, sparkles, zap, heart.
 
-3. Service Descriptions must be benefit-driven, NOT feature lists:
-- Airbnb: "5-star guest reviews guaranteed with 4-hour turnarounds"
-- Medical: "Strict sanitization protocols meeting all ${formData.state} healthcare regulations"
-- Floor Care: "Industrial-grade restoration to protect your facility's investment"
-- Each service needs unique value proposition
+5. TESTIMONIALS: Generate 3 realistic testimonials. Each must mention a specific detail (square footage, frequency, industry). Use realistic first names with last initial. Include the service they used.
 
-4. FAQ must address 2026 buyer objections:
-- "Are your cleaners background checked?" (Yes, 100% vetted)
-- "What if I'm not satisfied?" (24-hour re-clean guarantee)
-- "Do you provide your own supplies?" (Yes, EPA-approved and eco-friendly)
+6. SERVICE PAGES: For EACH service, generate a complete page with:
+   - service_name (display name)
+   - slug (URL slug - use the exact slugs provided above)
+   - hero.headline and hero.subheadline (unique per service, SEO-optimized with ${formData.city})
+   - intro.headline and intro.text (3-4 sentences about this specific service)
+   - benefits: 3-5 items with title and description
+   - process.headline and process.steps: exactly 3 steps (title + description each)
+   - faq: 3-4 questions and answers specific to this service
+   - cta.headline and cta.text
 
-5. Inject ${formData.city} and ${formData.state} naturally throughout content
+7. FAQ: Each answer should be 2-3 conversational sentences. Address real buyer objections.
 
-6. Social Proof phrasing:
-${hasResidential ? `- Residential: "Join 500+ happy families in ${formData.city}"` : ''}
-${hasCommercial ? `- Commercial: "The reliable partner for ${formData.city} businesses"` : ''}
+8. Weave ${formData.city} and ${formData.state} naturally into headlines and descriptions. Do NOT force it into every sentence.
 
-Generate content following this exact structure:
+9. All content must sound like it was written by a human copywriter, NOT an AI. No buzzwords like "leverage," "cutting-edge," or "state-of-the-art."
 
-seo: {
-  homepage: {
-    meta_title: "60-character SEO title with primary keyword and ${formData.city}",
-    meta_description: "150-character description with benefits and location",
-    focus_keyword: "primary service + ${formData.city}"
-  }
-}
+=== OUTPUT FORMAT ===
 
-hero: {
-  headline: (48-64px size, benefit-driven, mentions location and industry pain points if applicable),
-  subheadline: (20-28px, builds trust, mentions coverage area and industry credentials),
-  image_alt: "Descriptive alt text for hero image mentioning service and location"
-}
+Return a JSON object with this EXACT structure:
 
-trust_bar: [4 short trust statements including industry certifications if applicable]
-
-services: {
-  [service_name]: "2-3 sentence description incorporating industry-specific requirements"
-}
-
-about: {
-  title: "Compelling headline",
-  text: "3-4 sentences establishing authority and industry expertise",
-  image_alt: "Alt text for about section image"
-}
-
-overall_business_benefits: [
-  {title: "Overall benefit 1", description: "Core value proposition", icon_alt: "Icon description"}
-] (3-5 company-wide benefits that apply across all services)
-
-service_specific_benefits: {
-  [service_name]: [
-    {title: "Benefit title", description: "Service-specific benefit with industry focus", icon_alt: "Icon description"}
-  ] (3-5 benefits per service)
-}
-
-benefits: [
-  {title: "Benefit title", description: "Benefit description with industry focus", icon_alt: "Icon description"}
-] (6 benefits for homepage - can mix overall and service-specific)
-
-why_choose_us: [
-  {
-    title: "Key Differentiator 1",
-    description: "Detailed explanation of what sets you apart",
-    industry_relevance: "How this applies to ${formData.industries_served?.join(', ') || 'target industries'}"
+{
+  "hero": {
+    "headline": "string",
+    "subheadline": "string"
   },
-  {
-    title: "Key Differentiator 2",
-    description: "Unique competitive advantage",
-    industry_relevance: "Industry-specific application"
+  "trust_bar": ["string", "string", "string", "string"],
+  "services": {
+    "Service Name": "2-sentence benefit description"
   },
-  {
-    title: "Key Differentiator 3",
-    description: "Core strength or credential",
-    industry_relevance: "Why this matters to ${formData.industries_served?.join(', ') || 'your clients'}"
+  "about": {
+    "title": "string",
+    "text": "string (3-4 sentences, can include newlines)"
+  },
+  "benefits": [
+    { "title": "string", "description": "string", "icon": "shield|clock|star|users|leaf|thumbsup|award|check|badge|sparkles|zap|heart" }
+  ],
+  "testimonials": [
+    { "name": "string", "text": "string (2-3 sentences)", "rating": 5, "service": "string", "business": "string or empty" }
+  ],
+  "cta": {
+    "headline": "string",
+    "subheadline": "string"
+  },
+  "footer": {
+    "tagline": "string"
+  },
+  "pages": {
+    "services": [
+      {
+        "service_name": "string",
+        "slug": "exact-slug-from-above",
+        "hero": {
+          "headline": "string with ${formData.city}",
+          "subheadline": "string"
+        },
+        "intro": {
+          "headline": "string",
+          "text": "string (3-4 sentences)"
+        },
+        "benefits": [
+          { "title": "string", "description": "string" }
+        ],
+        "process": {
+          "headline": "How It Works",
+          "steps": [
+            { "title": "string", "description": "string" },
+            { "title": "string", "description": "string" },
+            { "title": "string", "description": "string" }
+          ]
+        },
+        "faq": [
+          { "question": "string", "answer": "string (2-3 sentences)" }
+        ],
+        "cta": {
+          "headline": "string",
+          "text": "string"
+        }
+      }
+    ]
   }
-] (3 key differentiators tailored to selected industries)
-
-testimonials: [
-  {
-    name: "Realistic customer name",
-    business: "Business name (optional)",
-    industry: "${formData.industries_served?.[0] || 'General'}",
-    text: "Detailed testimonial quote (2-3 sentences) mentioning specific results, service quality, and industry-relevant outcomes",
-    rating: 5,
-    service_used: "${formData.service_types[0]}"
-  }
-] (3-5 unique, realistic testimonials based on company's services and industries served)
-
-cta: {
-  headline: "Action headline",
-  subheadline: "Supporting text",
-  image_alt: "CTA section image alt text"
 }
 
-footer: {
-  tagline: "Company tagline"
-}
-
-pages: {
-  ${formData.service_types.map(service => {
-    const key = service.toLowerCase().replace(/\s+/g, '_').replace(/\//g, '');
-    return `"${key}": {
-    seo: {
-      meta_title: "60-char SEO title: ${service} in ${formData.city} | ${formData.company_name}",
-      meta_description: "150-char description with benefits, location, and industry focus",
-      focus_keyword: "${service.toLowerCase()} ${formData.city.toLowerCase()}"
-    },
-    headline: "SEO-optimized headline with ${formData.city} and industry pain point",
-    subheadline: "Compelling subheadline addressing industry concerns",
-    description_title: "About This Service",
-    description: "4-5 sentences, benefit-driven, mentions ${formData.city}, ${formData.state}, and industry-specific solutions",
-    benefits: [
-      {title: "Benefit 1", description: "Industry-specific benefit detail", icon_alt: "Icon description"},
-      {title: "Benefit 2", description: "Industry-specific benefit detail", icon_alt: "Icon description"},
-      {title: "Benefit 3", description: "Industry-specific benefit detail", icon_alt: "Icon description"},
-      {title: "Benefit 4", description: "Industry-specific benefit detail", icon_alt: "Icon description"},
-      {title: "Benefit 5", description: "Industry-specific benefit detail", icon_alt: "Icon description"}
-    ] (3-5 unique benefits for THIS specific service),
-    why_choose_us: [
-      {title: "Reason 1 (industry-focused)", desc: "Detail with credentials"},
-      {title: "Reason 2 (industry-focused)", desc: "Detail with compliance"},
-      {title: "Reason 3 (industry-focused)", desc: "Detail with results"}
-    ],
-    service_images: [
-      {url: "Suggest HD image URL or description", alt: "Detailed alt text"},
-      {url: "Suggest HD image URL or description", alt: "Detailed alt text"}
-    ],
-    hero_image_alt: "Alt text: Professional ${service.toLowerCase()} service in ${formData.city}",
-    section_image_alts: ["Alt text 1", "Alt text 2", "Alt text 3"]
-  }`;
-  }).join(',\n  ')}
-}
-
-IMPORTANT: Generate detailed, unique content for each service page. Each service must have its own entry in the pages object using underscore-separated lowercase keys (e.g., "residential_cleaning", "commercial_cleaning").
-
-Services to generate pages for: ${formData.service_types.join(', ')}
-
-${formData.existing_website_url ? 'Use the reference website for content inspiration but create fresh, professional copy.' : 'Create compelling, professional copy that converts.'}`;
+CRITICAL: The "pages.services" array MUST contain one entry for EACH of these services: ${formData.service_types.join(', ')}. Use the exact slugs provided above.`;
 
         const aiContent = await base44.integrations.Core.InvokeLLM({
           prompt: aiPrompt,
@@ -306,19 +227,131 @@ ${formData.existing_website_url ? 'Use the reference website for content inspira
           response_json_schema: {
             type: "object",
             properties: {
-              seo: { type: "object" },
-              hero: { type: "object" },
-              trust_bar: { type: "array" },
+              hero: {
+                type: "object",
+                properties: {
+                  headline: { type: "string" },
+                  subheadline: { type: "string" }
+                }
+              },
+              trust_bar: { type: "array", items: { type: "string" } },
               services: { type: "object" },
-              about: { type: "object" },
-              overall_business_benefits: { type: "array" },
-              service_specific_benefits: { type: "object" },
-              benefits: { type: "array" },
-              why_choose_us: { type: "array" },
-              testimonials: { type: "array" },
-              cta: { type: "object" },
-              footer: { type: "object" },
-              pages: { type: "object" }
+              about: {
+                type: "object",
+                properties: {
+                  title: { type: "string" },
+                  text: { type: "string" }
+                }
+              },
+              benefits: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    title: { type: "string" },
+                    description: { type: "string" },
+                    icon: { type: "string" }
+                  }
+                }
+              },
+              testimonials: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    name: { type: "string" },
+                    text: { type: "string" },
+                    rating: { type: "number" },
+                    service: { type: "string" },
+                    business: { type: "string" }
+                  }
+                }
+              },
+              cta: {
+                type: "object",
+                properties: {
+                  headline: { type: "string" },
+                  subheadline: { type: "string" }
+                }
+              },
+              footer: {
+                type: "object",
+                properties: {
+                  tagline: { type: "string" }
+                }
+              },
+              pages: {
+                type: "object",
+                properties: {
+                  services: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        service_name: { type: "string" },
+                        slug: { type: "string" },
+                        hero: {
+                          type: "object",
+                          properties: {
+                            headline: { type: "string" },
+                            subheadline: { type: "string" }
+                          }
+                        },
+                        intro: {
+                          type: "object",
+                          properties: {
+                            headline: { type: "string" },
+                            text: { type: "string" }
+                          }
+                        },
+                        benefits: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              title: { type: "string" },
+                              description: { type: "string" }
+                            }
+                          }
+                        },
+                        process: {
+                          type: "object",
+                          properties: {
+                            headline: { type: "string" },
+                            steps: {
+                              type: "array",
+                              items: {
+                                type: "object",
+                                properties: {
+                                  title: { type: "string" },
+                                  description: { type: "string" }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        faq: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              question: { type: "string" },
+                              answer: { type: "string" }
+                            }
+                          }
+                        },
+                        cta: {
+                          type: "object",
+                          properties: {
+                            headline: { type: "string" },
+                            text: { type: "string" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         });

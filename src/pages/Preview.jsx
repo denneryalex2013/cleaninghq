@@ -7,6 +7,7 @@ import Navigation from '../components/preview/Navigation';
 import Hero from '../components/preview/Hero';
 import TrustBar from '../components/preview/TrustBar';
 import Services from '../components/preview/Services';
+import ServiceSection from '../components/preview/ServiceSection';
 import About from '../components/preview/About';
 import Benefits from '../components/preview/Benefits';
 import Testimonials from '../components/preview/Testimonials';
@@ -158,6 +159,18 @@ export default function Preview() {
       <Hero {...heroProps} />
       <TrustBar primaryColor={primaryColor} tertiaryColor={tertiaryColor} />
       <Services {...servicesProps} />
+
+      {/* Individual Service Sections */}
+      {hasNewStructure && servicePages.map((servicePage, idx) => (
+        <ServiceSection
+          key={servicePage.slug}
+          service={servicePage}
+          primaryColor={primaryColor}
+          tertiaryColor={idx % 2 === 0 ? '#ffffff' : tertiaryColor}
+          heroImage={siteRequest.gallery_images?.[idx % (siteRequest.gallery_images?.length || 1)]}
+        />
+      ))}
+
       <About {...aboutProps} image={siteRequest.gallery_images?.[1]} />
       <Benefits benefits={pages.homepage?.benefits || content.benefits} primaryColor={primaryColor} />
       <Testimonials 

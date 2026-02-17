@@ -27,7 +27,7 @@ export default function Navigation({ companyName, logo, phone, primaryColor, ser
   
   const getServiceRoute = (service) => {
     const serviceSlug = service.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '');
-    return recordId ? `?id=${recordId}&page=${serviceSlug}-${citySlug}` : `?page=${serviceSlug}-${citySlug}`;
+    return `#${serviceSlug}-${citySlug}`;
   };
 
   return (

@@ -3,8 +3,6 @@ import { ArrowRight } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
 export default function Services({ services, primaryColor }) {
-  const [searchParams] = useSearchParams();
-  const recordId = searchParams.get('id');
   return (
     <section className="py-32 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
@@ -20,12 +18,11 @@ export default function Services({ services, primaryColor }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {services.map((service, idx) => {
             const slug = service.slug || service.title.toLowerCase().replace(/\s+/g, '-').replace(/\//g, '');
-            const serviceLink = recordId ? `?id=${recordId}&page=${slug}` : `?page=${slug}`;
             
             return (
               <a 
                 key={idx}
-                href={serviceLink}
+                href={`#${slug}`}
                 className="group bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-transparent hover:shadow-2xl transition-all duration-300 block"
                 onMouseEnter={(e) => e.currentTarget.style.boxShadow = `0 20px 60px ${primaryColor}40`}
                 onMouseLeave={(e) => e.currentTarget.style.boxShadow = ''}

@@ -1,0 +1,205 @@
+{
+  "name": "SiteRequest",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Base44 user ID who owns this site"
+    },
+    "owner_email": {
+      "type": "string",
+      "description": "Email of the business owner (for linking before signup)"
+    },
+    "stripe_customer_id": {
+      "type": "string",
+      "description": "Stripe customer ID for subscriptions"
+    },
+    "stripe_subscription_id": {
+      "type": "string",
+      "description": "Stripe subscription ID"
+    },
+    "company_name": {
+      "type": "string",
+      "description": "Company name"
+    },
+    "email": {
+      "type": "string",
+      "description": "Contact email"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Contact phone"
+    },
+    "city": {
+      "type": "string",
+      "description": "City location"
+    },
+    "state": {
+      "type": "string",
+      "description": "State location"
+    },
+    "existing_website_url": {
+      "type": "string",
+      "description": "User's existing website URL for reference"
+    },
+    "service_types": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Commercial Cleaning",
+          "Residential Cleaning",
+          "Post-Construction Cleaning",
+          "Office Cleaning",
+          "Medical Cleaning",
+          "Janitorial Services",
+          "Airbnb Cleaning",
+          "Move-In / Move-Out Cleaning",
+          "Floor Care",
+          "Carpet Cleaning",
+          "Pressure Washing",
+          "Window Cleaning"
+        ]
+      },
+      "description": "Selected service types"
+    },
+    "industries_served": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Medical & Healthcare",
+          "Industrial & Manufacturing",
+          "Legal & Professional Offices",
+          "Food Service & Hospitality",
+          "Retail & Showroom",
+          "Educational (Schools/Daycare)",
+          "Data Centers & IT",
+          "Post-Construction (Commercial)",
+          "Gym & Fitness"
+        ]
+      },
+      "description": "Industries/sectors the business serves"
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Legacy services field (deprecated)"
+    },
+    "years_in_business": {
+      "type": "number",
+      "description": "Years in business"
+    },
+    "insured": {
+      "type": "boolean",
+      "description": "Is the business insured"
+    },
+    "google_rating": {
+      "type": "number",
+      "description": "Google rating (1-5)"
+    },
+    "primary_color": {
+      "type": "string",
+      "description": "Brand primary color"
+    },
+    "secondary_color": {
+      "type": "string",
+      "description": "Brand secondary color"
+    },
+    "tertiary_color": {
+      "type": "string",
+      "description": "Brand tertiary color"
+    },
+    "style": {
+      "type": "string",
+      "enum": [
+        "Modern",
+        "Corporate",
+        "Luxury",
+        "Bold",
+        "Minimal"
+      ],
+      "description": "Website style preference"
+    },
+    "logo": {
+      "type": "string",
+      "description": "Logo file URL (deprecated)"
+    },
+    "logo_url": {
+      "type": "string",
+      "description": "Business logo URL"
+    },
+    "hero_image_url": {
+      "type": "string",
+      "description": "Hero section background image"
+    },
+    "gallery_images": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Gallery image URLs"
+    },
+    "google_business_url": {
+      "type": "string",
+      "description": "Google Business Profile URL"
+    },
+    "google_review_count": {
+      "type": "number",
+      "description": "Number of Google reviews"
+    },
+    "google_reviews": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "Google reviews data"
+    },
+    "reviews_verified": {
+      "type": "boolean",
+      "description": "Reviews verified against website match"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "generating",
+        "generated",
+        "active"
+      ],
+      "default": "pending",
+      "description": "Generation status"
+    },
+    "generated_content": {
+      "type": "object",
+      "description": "AI-generated website content"
+    },
+    "preview_url": {
+      "type": "string",
+      "description": "Preview URL for generated site"
+    },
+    "subscription_status": {
+      "type": "string",
+      "enum": [
+        "inactive",
+        "active",
+        "cancelled"
+      ],
+      "default": "inactive",
+      "description": "Subscription status"
+    },
+    "stripe_session_id": {
+      "type": "string",
+      "description": "Stripe checkout session ID for payment tracking"
+    }
+  },
+  "required": [
+    "company_name",
+    "email",
+    "phone",
+    "city",
+    "state"
+  ]
+}

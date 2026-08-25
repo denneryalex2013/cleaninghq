@@ -1,0 +1,33 @@
+{
+  "name": "WebsiteAsset",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User who uploaded the asset"
+    },
+    "site_request_id": {
+      "type": "string",
+      "description": "Site request this asset belongs to"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "URL of uploaded file"
+    },
+    "file_type": {
+      "type": "string",
+      "enum": [
+        "image",
+        "logo",
+        "gallery"
+      ],
+      "description": "Type of file"
+    }
+  },
+  "required": [
+    "user_id",
+    "site_request_id",
+    "file_url",
+    "file_type"
+  ]
+}

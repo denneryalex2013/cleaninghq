@@ -1,0 +1,47 @@
+{
+  "name": "Lead",
+  "type": "object",
+  "properties": {
+    "site_request_id": {
+      "type": "string",
+      "description": "Associated site request"
+    },
+    "name": {
+      "type": "string",
+      "description": "Lead name"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Lead phone"
+    },
+    "email": {
+      "type": "string",
+      "description": "Lead email"
+    },
+    "service_needed": {
+      "type": "string",
+      "description": "Service requested"
+    },
+    "message": {
+      "type": "string",
+      "description": "Additional message"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "contacted",
+        "converted",
+        "lost"
+      ],
+      "default": "new",
+      "description": "Lead status"
+    }
+  },
+  "required": [
+    "name",
+    "phone",
+    "email",
+    "service_needed"
+  ]
+}

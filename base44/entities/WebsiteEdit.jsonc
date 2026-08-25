@@ -1,0 +1,59 @@
+{
+  "name": "WebsiteEdit",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User ID who made the edit"
+    },
+    "site_request_id": {
+      "type": "string",
+      "description": "Site request being edited"
+    },
+    "message": {
+      "type": "string",
+      "description": "User or assistant message"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "user",
+        "assistant"
+      ],
+      "description": "Message role"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "processing",
+        "completed",
+        "failed"
+      ],
+      "default": "pending",
+      "description": "Edit processing status"
+    },
+    "edit_type": {
+      "type": "string",
+      "enum": [
+        "text",
+        "image",
+        "layout",
+        "color",
+        "service",
+        "general"
+      ],
+      "description": "Type of edit requested"
+    },
+    "applied_changes": {
+      "type": "object",
+      "description": "Changes that were applied"
+    }
+  },
+  "required": [
+    "user_id",
+    "site_request_id",
+    "message",
+    "role"
+  ]
+}
